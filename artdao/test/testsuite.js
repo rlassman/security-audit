@@ -55,7 +55,7 @@ describe("art_commission", function () {
             // set params
             const price = ethers.parseEther("1.0");
             const upfront = ethers.parseEther("0.3");
-            const insurance = ethers.parseEther("0.015"); // must be > 0.015 eth
+            const insurance = ethers.parseEther("0.0074"); // must be > 0.015 eth?
             const timeframe = 30;
 
             // deploy
@@ -72,6 +72,33 @@ describe("art_commission", function () {
             
         })
 
+        it("Should fail on price not >= upfront payment", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
+
+            // set params
+            const price = ethers.parseEther("1.0");
+            const upfront = ethers.parseEther("1.3"); // too high
+            const insurance = ethers.parseEther("0.02");
+            const timeframe = 30;
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(buyer).deploy(
+            buyer.address,
+            artist.address,
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+            )).to.be.revertedWith("Upfront exceeds full price");
+        })
+        // add ownership checks?
     });
+
+    // test commission life cycle
+    describe("Commission life cycle", function () {
+        // call stuff without minting/setting up contracts correctly
+    });  
 });
 
