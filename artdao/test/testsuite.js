@@ -25,7 +25,7 @@ describe("art_commission", function () {
         const nft = await ERC721Mock.deploy("Test Art", "ART");
 
         // deploy art commission contract
-        const price = ethers.parseEther("1.0");
+        /*const price = ethers.parseEther("1.0");
         const upfront = ethers.parseEther("0.3");
         const insurance = ethers.parseEther("0.02");
         const timeframe = 30;
@@ -39,18 +39,39 @@ describe("art_commission", function () {
         upfront,
         timeframe,
         artDAO.target
-        );
+        );*/
 
-        return { artDAO, nft, commission, deployer, buyer, artist };
+        return { artDAO, nft, deployer, buyer, artist };
     }
 
-    //
-    describe("Basic", function () {
-        it("Should set right owner", async function () {
-            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deploy);
+    // test art commision construction
+    describe("Deploy art commission correctly", function () {
+        /*
+        Bug: comment in contract says insurance must be > 0.015 eth but actual threshold is > 0.0075 eth
+        */
+        it("Should fail on too low insurance", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
 
+            // set params
+            const price = ethers.parseEther("1.0");
+            const upfront = ethers.parseEther("0.3");
+            const insurance = ethers.parseEther("0.015"); // must be > 0.015 eth
+            const timeframe = 30;
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(buyer).deploy(
+            buyer.address,
+            artist.address,
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+            )).to.be.revertedWith("Insurance too low");
             
         })
+
     });
 });
 
