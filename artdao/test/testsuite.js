@@ -24,8 +24,21 @@ describe("art_commission", function () {
         const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
         const nft = await ERC721Mock.deploy("Test Art", "ART");
 
+        return { artDAO, nft, deployer, buyer, artist };
+    }
+    async function deployFull() {
+        const [deployer, buyer, artist] = await ethers.getSigners();
+
+        // deploy ArtDAO contract
+        const ArtDAO = await ethers.getContractFactory("ArtDAO");
+        const artDAO = await ArtDAO.deploy();
+
+        // deploy nft contract
+        const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
+        const nft = await ERC721Mock.deploy("Test Art", "ART");
+
         // deploy art commission contract
-        /*const price = ethers.parseEther("1.0");
+        const price = ethers.parseEther("1.0");
         const upfront = ethers.parseEther("0.3");
         const insurance = ethers.parseEther("0.02");
         const timeframe = 30;
@@ -39,11 +52,10 @@ describe("art_commission", function () {
         upfront,
         timeframe,
         artDAO.target
-        );*/
+        );
 
-        return { artDAO, nft, deployer, buyer, artist };
+        return { artDAO, nft, commission, deployer, buyer, artist };
     }
-
     // test art commision construction
     describe("Deploy art commission correctly", function () {
         /*
@@ -98,7 +110,77 @@ describe("art_commission", function () {
 
     // test commission life cycle
     describe("Commission life cycle", function () {
-        // call stuff without minting/setting up contracts correctly
+        // confirm
+        it("Regular Contract Confirm", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+
+            // check state updated
+            expect(await commission.progress()).to.equal(0);
+            const tx = await commission.connect(artist).contractConfirm();
+            expect(await commission.progress()).to.equal(1);
+
+            // check event emitted
+            const receipt = await tx.wait();
+            const event = receipt.logs.find(log => log.fragment && log.fragment.name === "ContractConfirmed");
+            expect(event.args.confirmer).to.equal(artist.address); // artist confirmed
+        })
+        it("Should fail if non-artist tries to confirm", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+
+            await expect(commission.connect(deployer).contractConfirm()).to.be.revertedWith("Not involved party");
+            await expect(commission.connect(buyer).contractConfirm()).to.be.revertedWith("Artist must approve proposed commission");
+        })
+
+        // fund
+        it("Regular fund", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+
+            // confirm contract first
+            await commission.connect(artist).contractConfirm();
+
+            // fund
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            const tx = await commission.connect(artist).fund({ value: artistFund });
+            const tx2 = await commission.connect(buyer).fund({ value: buyerFund });
+
+            // check events
+            const receipt = await tx.wait();
+            const event = receipt.logs.find(log => log.fragment && log.fragment.name === "Funded");
+            expect(event.args.funder).to.equal(artist.address); 
+            expect(event.args.amount).to.equal(artistFund);
+
+            const receipt2 = await tx2.wait();
+            const event2 = receipt2.logs.find(log => log.fragment && log.fragment.name === "Funded");
+            expect(event2.args.funder).to.equal(buyer.address); 
+            expect(event2.args.amount).to.equal(buyerFund);
+
+            // check state updated
+            expect(await commission.progress()).to.equal(2);
+        })
+        it("Should fail if fund called before confirm", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const artistFund = insurance / 2n;
+            await expect(commission.connect(artist).fund({ value: artistFund })).to.be.revertedWith("Contract has not been confirmed by both parties");
+        })
+        it("Should fail with wrong funding amounts", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            await commission.connect(artist).contractConfirm();
+            await expect(commission.connect(artist).fund({ value: ethers.parseEther("0.02") })).to.be.revertedWith("Wrong artist funding");
+            await expect(commission.connect(buyer).fund({ value: ethers.parseEther("0.02") })).to.be.revertedWith("Wrong buyer funding");
+        });
+
+        // accept art
+
+        // pay in full and release
+
+        // good faith release
+
     });  
 });
 
+// what about buyer and artist same address?
+    // fund will fail because both if statements will be entered (but ig it should fail bc buyer and artist should be different)
