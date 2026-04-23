@@ -86,6 +86,40 @@ describe("art_commission", function () {
 
         return { artDAO, nft, commission, deployer, buyer, artist };
     }
+    async function deployEvilArtist() {
+        const [deployer, buyer] = await ethers.getSigners();
+
+        // deploy evil artist
+        const EvilArtist = await ethers.getContractFactory("RejectETH");
+        const evilArtist = await EvilArtist.deploy();
+
+        // deploy ArtDAO contract
+        const ArtDAO = await ethers.getContractFactory("ArtDAO");
+        const artDAO = await ArtDAO.deploy();
+
+        // deploy nft contract
+        const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
+        const nft = await ERC721Mock.deploy("Test Art", "ART");
+
+        // deploy art commission contract
+        const price = ethers.parseEther("1.0");
+        const upfront = ethers.parseEther("0.3");
+        const insurance = ethers.parseEther("0.02");
+        const timeframe = 0;
+
+        const ArtCommission = await ethers.getContractFactory("ArtCommission");
+        const commission = await ArtCommission.connect(buyer).deploy(
+        buyer.address,
+        evilArtist.target,
+        insurance,
+        price,
+        upfront,
+        timeframe,
+        artDAO.target
+        );
+
+        return { artDAO, nft, commission, deployer, buyer, evilArtist };
+    }
     // copied from daoDisputeFlow
     async function setupNewDAO() {
         const [deployer, buyer, artist, holder1, holder2, holder3, holder4] = await ethers.getSigners();
@@ -328,6 +362,27 @@ describe("art_commission", function () {
             expect(event.args.artist).to.equal(artist.address);
 
         })
+        it("Wrong final payment sent", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // pay wrong amount
+            const tx = await expect(commission.connect(buyer).payInFullAndRelease({
+                value: upfront
+            })).to.be.revertedWith("Not the expected full final payment");
+        });
         // evil nft contract
         it("Full cycle but nft contract does not transfer nft", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployEvilNFT);
@@ -362,6 +417,30 @@ describe("art_commission", function () {
             expect(await nft.ownerOf(1)).to.equal(artist.address);
 
         })
+        // test case where artist transfer reverts, buyer should never receive insurance (would pressumably dispute)
+        /*it("Artist contract reverts on transfer", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployEvilArtist);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // pay in full and release
+            const lastPayment = price - upfront;
+            const tx = await event(commission.connect(buyer).payInFullAndRelease({
+                value: lastPayment
+            })).to.be.revertedWith("i'm evil");
+
+        })*/
 
         // good faith release
         /*
@@ -383,9 +462,9 @@ describe("art_commission", function () {
             await nft.connect(artist).approve(commission.target, 1);
             await commission.connect(artist).acceptArt(nft.target, 1);
 
-            // release
-            const tx = await commission.connect(buyer).goodFaithRelease();
-            const tx2 = await commission.connect(artist).goodFaithRelease();
+            // release - fails
+            await expect(commission.connect(buyer).goodFaithRelease()).to.be.revertedWith("Both parties must approve cancellation");
+            await expect(commission.connect(artist).goodFaithRelease()).to.be.revertedWith("Both parties must approve cancellation");
             
         })
 
@@ -452,8 +531,6 @@ describe("art_commission", function () {
 
 // what about buyer and artist same address?
     // fund will fail because both if statements will be entered (but ig it should fail bc buyer and artist should be different)
-
-// write test where artist transfer reverts (need to make mock contract to be artist)
 
 // i feel like good faith release could be exploited but can't test as is (broken logic)
     // once buyer and artist approve, one could have receive that keeps calling good faith release
