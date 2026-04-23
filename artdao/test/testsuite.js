@@ -56,6 +56,36 @@ describe("art_commission", function () {
 
         return { artDAO, nft, commission, deployer, buyer, artist };
     }
+    async function deployBurnable() {
+        const [deployer, buyer, artist] = await ethers.getSigners();
+
+        // deploy ArtDAO contract
+        const ArtDAO = await ethers.getContractFactory("ArtDAO");
+        const artDAO = await ArtDAO.deploy();
+
+        // deploy nft contract
+        const ERC721Burnable = await ethers.getContractFactory("ERC721Burnable");
+        const nft = await ERC721Burnable.deploy("Test Art", "ART");
+
+        // deploy art commission contract
+        const price = ethers.parseEther("1.0");
+        const upfront = ethers.parseEther("0.3");
+        const insurance = ethers.parseEther("0.02");
+        const timeframe = 30;
+
+        const ArtCommission = await ethers.getContractFactory("ArtCommission");
+        const commission = await ArtCommission.connect(buyer).deploy(
+        buyer.address,
+        artist.address,
+        insurance,
+        price,
+        upfront,
+        timeframe,
+        artDAO.target
+        );
+
+        return { artDAO, nft, commission, deployer, buyer, artist };
+    }
     // test art commision construction
     describe("Deploy art commission correctly", function () {
         /*
@@ -174,8 +204,63 @@ describe("art_commission", function () {
         });
 
         // accept art
+        it("Regular accept art", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            const tx = await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // check event
+            const receipt = await tx.wait();
+            const event = receipt.logs.find(log => log.fragment && log.fragment.name === "ArtworkSubmitted");
+            expect(event.args.nft).to.equal(nft.target); 
+            expect(event.args.tokenId).to.equal(1);
+
+            // check state updated
+            expect(await commission.progress()).to.equal(3);
+        })
 
         // pay in full and release
+        it("Regular pay in full and release", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // pay in full and release
+            const lastPayment = price - upfront;
+            const tx = await commission.connect(buyer).payInFullAndRelease({
+                value: lastPayment
+            });
+            expect(await nft.ownerOf(1)).to.equal(buyer.address);
+            expect(await commission.progress()).to.equal(4);
+
+            // check event
+            const receipt = await tx.wait();
+            const event = receipt.logs.find(log => log.fragment && log.fragment.name === "CompletedSuccessfully");
+            expect(event.args.buyer).to.equal(buyer.address); 
+            expect(event.args.artist).to.equal(artist.address);
+
+        })
 
         // good faith release
 
@@ -184,3 +269,7 @@ describe("art_commission", function () {
 
 // what about buyer and artist same address?
     // fund will fail because both if statements will be entered (but ig it should fail bc buyer and artist should be different)
+
+// write test where artist transfer reverts (need to make mock contract to be artist)
+// write test where artist burns art - make evil nft contract
+    // need to see how dispute works
