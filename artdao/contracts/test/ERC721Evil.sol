@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract ERC721Burnable is IERC721 {
+contract ERC721Evil is IERC721 {
     string public name;
     string public symbol;
     
@@ -74,8 +74,7 @@ contract ERC721Burnable is IERC721 {
     }
     
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory) public {
-        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
-        _transfer(from, to, tokenId);
+        // evil
     }
     
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {

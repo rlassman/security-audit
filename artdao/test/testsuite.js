@@ -56,7 +56,7 @@ describe("art_commission", function () {
 
         return { artDAO, nft, commission, deployer, buyer, artist };
     }
-    async function deployBurnable() {
+    async function deployEvilNFT() {
         const [deployer, buyer, artist] = await ethers.getSigners();
 
         // deploy ArtDAO contract
@@ -64,8 +64,8 @@ describe("art_commission", function () {
         const artDAO = await ArtDAO.deploy();
 
         // deploy nft contract
-        const ERC721Burnable = await ethers.getContractFactory("ERC721Burnable");
-        const nft = await ERC721Burnable.deploy("Test Art", "ART");
+        const ERC721Evil = await ethers.getContractFactory("ERC721Evil");
+        const nft = await ERC721Evil.deploy("Test Art", "ART");
 
         // deploy art commission contract
         const price = ethers.parseEther("1.0");
@@ -259,6 +259,40 @@ describe("art_commission", function () {
             const event = receipt.logs.find(log => log.fragment && log.fragment.name === "CompletedSuccessfully");
             expect(event.args.buyer).to.equal(buyer.address); 
             expect(event.args.artist).to.equal(artist.address);
+
+        })
+        // evil nft contract
+        it("Full cycle but nft contract does not transfer nft", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployEvilNFT);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // pay in full and release
+            const lastPayment = price - upfront;
+            const tx = await commission.connect(buyer).payInFullAndRelease({
+                value: lastPayment
+            });
+            expect(await commission.progress()).to.equal(4);
+
+            // check event
+            const receipt = await tx.wait();
+            const event = receipt.logs.find(log => log.fragment && log.fragment.name === "CompletedSuccessfully");
+            expect(event.args.buyer).to.equal(buyer.address); 
+            expect(event.args.artist).to.equal(artist.address);
+
+            // failed to transfer
+            expect(await nft.ownerOf(1)).to.equal(artist.address);
 
         })
 
