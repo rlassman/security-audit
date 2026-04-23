@@ -297,6 +297,31 @@ describe("art_commission", function () {
         })
 
         // good faith release
+        /*
+        Bug: can never sucessfully call good faith release, will always revert because buyerBreakFaith and artistBreakFaith must both become true before hitting require, not possible
+        */
+        it("Regular good faith release", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // release
+            const tx = await commission.connect(buyer).goodFaithRelease();
+            const tx2 = await commission.connect(artist).goodFaithRelease();
+            
+        })
+
 
     });  
 });
@@ -307,3 +332,6 @@ describe("art_commission", function () {
 // write test where artist transfer reverts (need to make mock contract to be artist)
 // write test where artist burns art - make evil nft contract
     // need to see how dispute works
+
+// i feel like good faith release could be exploited but can't test as is (broken logic)
+    // once buyer and artist approve, one could have receive that keeps calling good faith release
