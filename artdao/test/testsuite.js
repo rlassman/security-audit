@@ -330,8 +330,6 @@ describe("art_commission", function () {
     // fund will fail because both if statements will be entered (but ig it should fail bc buyer and artist should be different)
 
 // write test where artist transfer reverts (need to make mock contract to be artist)
-// write test where artist burns art - make evil nft contract
-    // need to see how dispute works
 
 // i feel like good faith release could be exploited but can't test as is (broken logic)
     // once buyer and artist approve, one could have receive that keeps calling good faith release
