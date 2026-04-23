@@ -41,7 +41,7 @@ describe("art_commission", function () {
         const price = ethers.parseEther("1.0");
         const upfront = ethers.parseEther("0.3");
         const insurance = ethers.parseEther("0.02");
-        const timeframe = 30;
+        const timeframe = 0;
 
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
@@ -71,7 +71,74 @@ describe("art_commission", function () {
         const price = ethers.parseEther("1.0");
         const upfront = ethers.parseEther("0.3");
         const insurance = ethers.parseEther("0.02");
-        const timeframe = 30;
+        const timeframe = 0;
+
+        const ArtCommission = await ethers.getContractFactory("ArtCommission");
+        const commission = await ArtCommission.connect(buyer).deploy(
+        buyer.address,
+        artist.address,
+        insurance,
+        price,
+        upfront,
+        timeframe,
+        artDAO.target
+        );
+
+        return { artDAO, nft, commission, deployer, buyer, artist };
+    }
+    // copied from daoDisputeFlow
+    async function setupNewDAO() {
+        const [deployer, buyer, artist, holder1, holder2, holder3, holder4] = await ethers.getSigners();
+
+        // deploy ArtDAO contract
+        const ArtDAO = await ethers.getContractFactory("ArtDAO");
+        const artDAO = await ArtDAO.deploy();
+
+        await network.provider.send("evm_increaseTime", [7 * 86400]);
+        await network.provider.send("evm_mine");
+        await artDAO.mint();
+
+        await artDAO
+            .connect(holder1)
+            .bid(1, { value: ethers.parseEther("0.01") });
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(1);
+
+        await network.provider.send("evm_increaseTime", [7 * 86400]);
+        await network.provider.send("evm_mine");
+        await artDAO.mint();
+
+        await artDAO
+            .connect(holder2)
+            .bid(2, { value: ethers.parseEther("0.02") });
+        await artDAO
+            .connect(holder3)
+            .bid(2, { value: ethers.parseEther("0.03") });
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(2);
+
+        await network.provider.send("evm_increaseTime", [7 * 86400]);
+        await network.provider.send("evm_mine");
+        await artDAO.mint();
+
+        await artDAO
+            .connect(holder4)
+            .bid(3, { value: ethers.parseEther("0.01") });
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(3);
+
+         // deploy nft contract
+        const ERC721Evil = await ethers.getContractFactory("ERC721Evil");
+        const nft = await ERC721Evil.deploy("Test Art", "ART");
+
+        // deploy art commission contract
+        const price = ethers.parseEther("1.0");
+        const upfront = ethers.parseEther("0.3");
+        const insurance = ethers.parseEther("0.02");
+        const timeframe = 0;
 
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
@@ -291,7 +358,7 @@ describe("art_commission", function () {
             expect(event.args.buyer).to.equal(buyer.address); 
             expect(event.args.artist).to.equal(artist.address);
 
-            // failed to transfer
+            // failed to transfer ownership
             expect(await nft.ownerOf(1)).to.equal(artist.address);
 
         })
@@ -323,7 +390,64 @@ describe("art_commission", function () {
         })
 
 
-    });  
+    }); 
+    
+    describe("Test Dispute", function () {
+        /*
+        Bug: Even if buyer raises a dispute and wins, the broken transfer in the evil nft contract will prevent buyer from ever receiving art
+        Buyer never gets upfront payment refunded bc supposed to be getting art, only insurance refunded
+        Artist will still be penalized by losing insurance so they would just be doing this for the love of the game
+
+        Even if buyer gets art back the upfront payment is locked in the contract forever lol
+        */
+        it("Evil nft contract with broken transfer", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+
+            const insurance = ethers.parseEther("0.02");
+            const upfront = ethers.parseEther("0.3");
+            const price = ethers.parseEther("1");
+            await commission.connect(artist).contractConfirm();
+            const artistFund = insurance / 2n;
+            const buyerFund = insurance / 2n + upfront;
+            await commission.connect(artist).fund({ value: artistFund });
+            await commission.connect(buyer).fund({ value: buyerFund });
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await commission.connect(artist).acceptArt(nft.target, 1);
+
+            // buyer creates dispute
+            const panelSize = 3;
+            const votingDuration = 300;
+
+            await network.provider.send("evm_increaseTime", [2 * 86400]);
+            await network.provider.send("evm_mine");
+
+            await commission.connect(buyer).raiseDispute(panelSize, votingDuration);
+
+            const disputeId = await commission.disputeId();
+            await artDAO.selectJurors(disputeId, votingDuration);
+
+            const jurors = await artDAO.getJurors(disputeId);
+
+            for (const jurorAddr of jurors) {
+                const juror = await ethers.getSigner(jurorAddr);
+                await artDAO.connect(juror).vote(disputeId, 2); // buyer
+            }
+
+            await network.provider.send("evm_increaseTime", [votingDuration + 1]);
+            await network.provider.send("evm_mine");
+
+            await artDAO.resolveDispute(disputeId);
+
+            expect(await commission.progress()).to.equal(4);
+            expect(await nft.ownerOf(1)).to.equal(artist.address); // buyer does not receive art
+
+            expect(await ethers.provider.getBalance(commission.target)).to.equal(upfront); // buyer's upfront payment is still in contract
+        })
+
+    });
 });
 
 // what about buyer and artist same address?
