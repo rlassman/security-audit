@@ -343,7 +343,7 @@ contract ArtDAO {
 
         address artistAddr = IArtCommission(d.commission).artist();
         address buyerAddr = IArtCommission(d.commission).buyer();
-
+        
         (
             address[] memory candidates,
             uint256[] memory weights,
