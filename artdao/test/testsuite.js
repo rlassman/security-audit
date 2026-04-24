@@ -10,9 +10,16 @@ const {
 const { ethers, network } = require("hardhat");
 const { expect } = require("chai");
 
-
 describe("art_commission", function () {
-    // basic set up
+    function defaultParams() {
+        return {
+            price: ethers.parseEther("1"),
+            upfront: ethers.parseEther("0.3"),
+            insurance: ethers.parseEther("0.02"),
+            timeframe: 0
+        };
+    }
+    // deploys artdao & nft contracts
     async function deploy() {
         const [deployer, buyer, artist] = await ethers.getSigners();
 
@@ -26,6 +33,7 @@ describe("art_commission", function () {
 
         return { artDAO, nft, deployer, buyer, artist };
     }
+    // deploys all contracts
     async function deployFull() {
         const [deployer, buyer, artist] = await ethers.getSigners();
 
@@ -38,11 +46,7 @@ describe("art_commission", function () {
         const nft = await ERC721Mock.deploy("Test Art", "ART");
 
         // deploy art commission contract
-        const price = ethers.parseEther("1.0");
-        const upfront = ethers.parseEther("0.3");
-        const insurance = ethers.parseEther("0.02");
-        const timeframe = 0;
-
+        const { price, upfront, insurance, timeframe } = defaultParams();
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
         buyer.address,
@@ -56,6 +60,7 @@ describe("art_commission", function () {
 
         return { artDAO, nft, commission, deployer, buyer, artist };
     }
+    // deploys evil nft contract that does not transfer art
     async function deployEvilNFT() {
         const [deployer, buyer, artist] = await ethers.getSigners();
 
@@ -68,11 +73,7 @@ describe("art_commission", function () {
         const nft = await ERC721Evil.deploy("Test Art", "ART");
 
         // deploy art commission contract
-        const price = ethers.parseEther("1.0");
-        const upfront = ethers.parseEther("0.3");
-        const insurance = ethers.parseEther("0.02");
-        const timeframe = 0;
-
+        const { price, upfront, insurance, timeframe } = defaultParams();
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
         buyer.address,
@@ -86,7 +87,8 @@ describe("art_commission", function () {
 
         return { artDAO, nft, commission, deployer, buyer, artist };
     }
-    async function deployEvilArtist() {
+
+    /*async function deployEvilArtist() {
         const [deployer, buyer] = await ethers.getSigners();
 
         // deploy evil artist
@@ -102,11 +104,7 @@ describe("art_commission", function () {
         const nft = await ERC721Mock.deploy("Test Art", "ART");
 
         // deploy art commission contract
-        const price = ethers.parseEther("1.0");
-        const upfront = ethers.parseEther("0.3");
-        const insurance = ethers.parseEther("0.02");
-        const timeframe = 0;
-
+        const { price, upfront, insurance, timeframe } = defaultParams();
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
         buyer.address,
@@ -119,8 +117,8 @@ describe("art_commission", function () {
         );
 
         return { artDAO, nft, commission, deployer, buyer, evilArtist };
-    }
-    // copied from daoDisputeFlow
+    }*/
+    // copied from daoDisputeFlow, sets up dao
     async function setupNewDAO() {
         const [deployer, buyer, artist, holder1, holder2, holder3, holder4] = await ethers.getSigners();
 
@@ -169,11 +167,7 @@ describe("art_commission", function () {
         const nft = await ERC721Evil.deploy("Test Art", "ART");
 
         // deploy art commission contract
-        const price = ethers.parseEther("1.0");
-        const upfront = ethers.parseEther("0.3");
-        const insurance = ethers.parseEther("0.02");
-        const timeframe = 0;
-
+        const { price, upfront, insurance, timeframe } = defaultParams();
         const ArtCommission = await ethers.getContractFactory("ArtCommission");
         const commission = await ArtCommission.connect(buyer).deploy(
         buyer.address,
@@ -199,7 +193,7 @@ describe("art_commission", function () {
             const price = ethers.parseEther("1.0");
             const upfront = ethers.parseEther("0.3");
             const insurance = ethers.parseEther("0.0074"); // must be > 0.015 eth?
-            const timeframe = 30;
+            const timeframe = 0;
 
             // deploy
             const ArtCommission = await ethers.getContractFactory("ArtCommission");
@@ -265,8 +259,7 @@ describe("art_commission", function () {
         // fund
         it("Regular fund", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
+            const { price, upfront, insurance, timeframe } = defaultParams();
 
             // confirm contract first
             await commission.connect(artist).contractConfirm();
@@ -293,7 +286,7 @@ describe("art_commission", function () {
         })
         it("Should fail if fund called before confirm", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             const artistFund = insurance / 2n;
             await expect(commission.connect(artist).fund({ value: artistFund })).to.be.revertedWith("Contract has not been confirmed by both parties");
         })
@@ -307,8 +300,7 @@ describe("art_commission", function () {
         // accept art
         it("Regular accept art", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -333,9 +325,7 @@ describe("art_commission", function () {
         // pay in full and release
         it("Regular pay in full and release", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
-            const price = ethers.parseEther("1");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -364,9 +354,7 @@ describe("art_commission", function () {
         })
         it("Wrong final payment sent", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
-            const price = ethers.parseEther("1");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -386,9 +374,7 @@ describe("art_commission", function () {
         // evil nft contract
         it("Full cycle but nft contract does not transfer nft", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployEvilNFT);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
-            const price = ethers.parseEther("1");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -448,9 +434,7 @@ describe("art_commission", function () {
         */
         it("Regular good faith release", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
-            const price = ethers.parseEther("1");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -477,14 +461,11 @@ describe("art_commission", function () {
         Buyer never gets upfront payment refunded bc supposed to be getting art, only insurance refunded
         Artist will still be penalized by losing insurance so they would just be doing this for the love of the game
 
-        Even if buyer gets art back the upfront payment is locked in the contract forever lol
+        Bug 2: Even if buyer gets art back the upfront payment is locked in the contract forever
         */
         it("Evil nft contract with broken transfer", async function () {
             const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(setupNewDAO);
-
-            const insurance = ethers.parseEther("0.02");
-            const upfront = ethers.parseEther("0.3");
-            const price = ethers.parseEther("1");
+            const { price, upfront, insurance, timeframe } = defaultParams();
             await commission.connect(artist).contractConfirm();
             const artistFund = insurance / 2n;
             const buyerFund = insurance / 2n + upfront;
@@ -527,7 +508,7 @@ describe("art_commission", function () {
         })
 
     });
-});
+})
 
 // what about buyer and artist same address?
     // fund will fail because both if statements will be entered (but ig it should fail bc buyer and artist should be different)
