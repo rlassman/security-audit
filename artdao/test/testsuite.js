@@ -426,6 +426,72 @@ describe("art_commission", function () {
 
             // check state updated
             expect(await commission.progress()).to.equal(3);
+
+            // check nft in contract
+            expect(await nft.ownerOf(1)).to.equal(commission.target);
+        })
+        it("Non-artist called accept art", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const params = defaultParams();
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await nft.connect(artist).approve(commission.target, 1);
+            await expect(commission.connect(buyer).acceptArt(nft.target, 1)).to.be.revertedWith("Not artist");
+        })
+        it("Call accept art without approving", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const params = defaultParams();
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+
+            // approve and accept art
+            await nft.mint(artist.address, 1);
+            await expect(commission.connect(artist).acceptArt(nft.target, 1)).to.be.revertedWith("ERC721: transfer caller is not owner nor approved");
+        })
+        it("Call accept art with nft artist doesn't own", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const params = defaultParams();
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+
+            // approve and accept art
+            await nft.mint(deployer.address, 1);
+            await nft.connect(deployer).approve(commission.target, 1);
+            await expect(commission.connect(artist).acceptArt(nft.target, 1)).to.be.revertedWith("Sender is not owner of the nft");
+        })
+        it("Artist tries to transfer art back to themself after submitting", async function () {
+            const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+            const params = defaultParams();
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+
+            // try to transfer art back to artist
+            await expect(nft.connect(artist).transferFrom(commission.target, artist.address, 1)).to.be.revertedWith("ERC721: transfer caller is not owner nor approved");
+            expect(await nft.ownerOf(1)).to.equal(commission.target);
         })
 
         // pay in full and release
@@ -446,6 +512,7 @@ describe("art_commission", function () {
             const tx = await commission.connect(buyer).payInFullAndRelease({
                 value: lastPayment
             });
+            // check nft transferred & state updated
             expect(await nft.ownerOf(1)).to.equal(buyer.address);
             expect(await commission.progress()).to.equal(4);
 
