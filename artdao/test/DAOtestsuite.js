@@ -76,6 +76,7 @@ describe("art_DAO", () => {
         return artDAO;
     }
 
+    //New function: create impossibly large panel size
     async function maliciousDisputeScenario(artDAO, voteChoice) {
         const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
         const nft = await ERC721Mock.deploy("Test Art", "ART");
@@ -128,6 +129,23 @@ describe("art_DAO", () => {
         await artDAO.resolveDispute(disputeId);
 
         return { commission, nft, disputeId };
+    }
+
+    //simulate auction with multiple bidders
+    //note: simulate evil bidder that rejects eth to rig auction
+    async function competitiveAuction(artDAO) {
+
+    }
+
+    //simulate auction with only one bidder
+    //note: used in evil Juror test
+    async function unpopularAuction(artDAO) {
+
+    }
+
+    //function to execute successful commission with no dispute
+    async function successfulTransaction(artDao) {
+
     }
 
         async function createDisputeScenario(artDAO, voteChoice) {
@@ -222,5 +240,12 @@ describe("art_DAO", () => {
 
         expect(await commission.progress()).to.equal(4);
         expect(await nft.ownerOf(1)).to.equal(artist.address);
+    });
+
+    it("Evil Juror", async () => {
+        //evil juror reject juror payout, trap dispute in limbo
+    });
+    it("Evil Bidder", async () => {
+        //evil bidder reject ether, nobody else can outbid
     });
 });
