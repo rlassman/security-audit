@@ -261,7 +261,80 @@ describe("art_commission", function () {
             artDAO.target
             )).to.be.revertedWith("Upfront exceeds full price");
         })
-        // add ownership checks?
+        
+        it("Should fail with buyer = 0 address", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
+
+            // set params
+            const { price, upfront, insurance, timeframe } = defaultParams();
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(artist).deploy(
+            ethers.ZeroAddress, // invalid buyer
+            artist.address,
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+            )).to.be.revertedWith("Invalid buyer");
+        })
+        it("Should fail with artist = 0 address", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
+
+            // set params
+            const { price, upfront, insurance, timeframe } = defaultParams();
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(buyer).deploy(
+            buyer.address, 
+            ethers.ZeroAddress, // invalid artist
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+            )).to.be.revertedWith("Invalid artist");
+        })
+        it("Should fail with dao = 0 address", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
+
+            // set params
+            const { price, upfront, insurance, timeframe } = defaultParams();
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(buyer).deploy(
+            buyer.address, 
+            artist.address, 
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            ethers.ZeroAddress // invalid dao
+            )).to.be.revertedWith("Invalid DAO");
+        })
+
+        it("Should fail with third party deploying", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(deploy);
+
+            // set params
+            const { price, upfront, insurance, timeframe } = defaultParams();
+
+            // deploy
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            await expect(ArtCommission.connect(deployer).deploy( // bad
+            buyer.address,
+            artist.address,
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+            )).to.be.revertedWith("Third party cannot initiate contract");
+        })
     });
 
     // test commission life cycle
