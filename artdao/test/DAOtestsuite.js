@@ -131,16 +131,16 @@ describe("art_DAO", () => {
         return { commission, nft, disputeId };
     }
 
-    //simulate auction with multiple bidders
+    //TODO simulate auction with multiple bidders
     //note: simulate evil bidder that rejects eth to rig auction
     async function competitiveAuction(artDAO) {
 
     }
 
-    //simulate auction with only one bidder
+    //TODO simulate auction with only one bidder
     //note: used in evil Juror test
-    async function unpopularAuction(artDAO) {
-
+    async function unpopularAuction(artDAO) { 
+        await artDAO.mint();
     }
 
     //function to execute successful commission with no dispute
@@ -198,6 +198,44 @@ describe("art_DAO", () => {
         return { commission, nft, disputeId };
     }
 
+      async function DisputeNoVotes(artDAO) {
+        const ERC721Mock = await ethers.getContractFactory("ERC721Mock");
+        const nft = await ERC721Mock.deploy("Test Art", "ART");
+        await nft.mint(artist.address, 1);
+
+        const ArtCommission = await ethers.getContractFactory("ArtCommission");
+        const commission = await ArtCommission.connect(buyer).deploy(
+            buyer.address,
+            artist.address,
+            insurance,
+            price,
+            upfront,
+            timeframe,
+            artDAO.target
+        );
+
+        await commission.connect(artist).contractConfirm();
+
+        const artistFund = insurance / 2n;
+        const buyerFund = insurance / 2n + upfront;
+
+        await commission.connect(artist).fund({ value: artistFund });
+        await commission.connect(buyer).fund({ value: buyerFund });
+
+        await nft.connect(artist).approve(commission.target, 1);
+        await commission.connect(artist).acceptArt(nft.target, 1);
+
+        await network.provider.send("evm_increaseTime", [2 * 86400]);
+        await network.provider.send("evm_mine");
+
+        await commission.connect(buyer).raiseDispute(panelSize, votingDuration);
+
+        const disputeId = await commission.disputeId();
+        await artDAO.selectJurors(disputeId, votingDuration);
+        const jurors = await artDAO.getJurors(disputeId);
+        return {disputeId, jurors};
+    }
+
     it("Artist win", async () => {
         const artDAO = await setupNewDAO();
         const { commission, nft } = await createDisputeScenario(
@@ -243,6 +281,39 @@ describe("art_DAO", () => {
     });
 
     it("Evil Juror", async () => {
+        const artDAO = await setupNewDAO();
+        const EvilJuror = await ethers.getContractFactory("EvilJuror");
+        const eviljuror = await EvilJuror.deploy(artDAO, {value: 10000});
+        await unpopularAuction(artDAO);
+        await eviljuror.makebid(4);
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(4);
+
+       panelSize = 3;
+      
+        const { disputeId, jurors } = await DisputeNoVotes(
+         artDAO,
+        )
+        
+
+        for (const jurorAddr of jurors) {
+            if (jurorAddr != eviljuror) {
+            const juror = await ethers.getSigner(jurorAddr);
+            await artDAO.connect(juror).vote(disputeId, 3);
+            } else {
+                await eviljuror.justvote(disputeId);
+            }
+        }
+
+        //each vote individually- if contract use special function instead of normal
+        //see if can resolve
+
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        expect(await commission.progress()).to.equal(4);
+        expect(await nft.ownerOf(1)).to.equal(artist.address);
+
         //evil juror reject juror payout, trap dispute in limbo
     });
     it("Evil Bidder", async () => {
