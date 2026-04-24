@@ -1,5 +1,5 @@
 /*
-Starting with art commission tests, might want separate file for art dao
+Tests for Art Commission Contract
 */
 
 // fixture (copied from codecoverage activity)
