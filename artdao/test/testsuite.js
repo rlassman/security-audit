@@ -777,7 +777,7 @@ describe("art_commission", function () {
             // check ownsership of art
             expect(await nft.ownerOf(1)).to.equal(buyer.address);
         })
-    });   
+    });
 })
 
 // i feel like good faith release could be exploited but can't test as is (broken logic)

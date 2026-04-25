@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/art_commission.sol": {
-      "lastModificationDate": 1776976054443,
+    "/home/rlassman/web3/security-audit/artdao/contracts/art_commission.sol": {
+      "lastModificationDate": 1777065970577,
       "contentHash": "c211a28dd375336df9f2e438395a137d",
       "sourceName": "contracts/art_commission.sol",
       "solcConfig": {
@@ -26,9 +26,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -45,8 +42,8 @@
         "IArtDAO"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1777044413703,
+    "/home/rlassman/web3/security-audit/artdao/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1777053331907,
       "contentHash": "681c532e816169606d13a5fe8b475074",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
@@ -70,9 +67,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -84,8 +78,8 @@
         "console"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1777045599621,
+    "/home/rlassman/web3/security-audit/artdao/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+      "lastModificationDate": 1777053331531,
       "contentHash": "f62e11dbd302e17a5621a1438f4e054c",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -109,9 +103,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -125,8 +116,8 @@
         "IERC721"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1777045599349,
+    "/home/rlassman/web3/security-audit/artdao/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
+      "lastModificationDate": 1777053331543,
       "contentHash": "d61660a41ce200e99816e4734f7fd202",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
@@ -150,9 +141,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -164,8 +152,8 @@
         "IERC721Receiver"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1777045577030,
+    "/home/rlassman/web3/security-audit/artdao/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1777053331355,
       "contentHash": "7074c93b1ea0a122063f26ddd1db1032",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -189,9 +177,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -203,8 +188,8 @@
         "IERC165"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilJuror.sol": {
-      "lastModificationDate": 1777081822117,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/EvilJuror.sol": {
+      "lastModificationDate": 1777141863334,
       "contentHash": "512b20212a4fa8944bbfed29399a4c59",
       "sourceName": "contracts/test/EvilJuror.sol",
       "solcConfig": {
@@ -228,9 +213,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -245,8 +227,8 @@
         "EvilJuror"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/ERC721Mock.sol": {
-      "lastModificationDate": 1776976054515,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/ERC721Mock.sol": {
+      "lastModificationDate": 1776538460765,
       "contentHash": "5e5dd134358ad59e4369809c58af7db9",
       "sourceName": "contracts/test/ERC721Mock.sol",
       "solcConfig": {
@@ -270,9 +252,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -286,8 +265,8 @@
         "ERC721Mock"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/ERC721Evil.sol": {
-      "lastModificationDate": 1776976054450,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/ERC721Evil.sol": {
+      "lastModificationDate": 1776972128261,
       "contentHash": "aa23b8c09a651bc6c123eee96ad6b08d",
       "sourceName": "contracts/test/ERC721Evil.sol",
       "solcConfig": {
@@ -311,9 +290,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -327,8 +303,8 @@
         "ERC721Evil"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/art_dao.sol": {
-      "lastModificationDate": 1777125139874,
+    "/home/rlassman/web3/security-audit/artdao/contracts/art_dao.sol": {
+      "lastModificationDate": 1776985417304,
       "contentHash": "adfe4164ba1ab8488083e54497c07d0b",
       "sourceName": "contracts/art_dao.sol",
       "solcConfig": {
@@ -352,9 +328,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -367,8 +340,8 @@
         "IArtCommission"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilArtist.sol": {
-      "lastModificationDate": 1777077491327,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/EvilArtist.sol": {
+      "lastModificationDate": 1777065445743,
       "contentHash": "74723578dfffd73cc98f458d2644ed74",
       "sourceName": "contracts/test/EvilArtist.sol",
       "solcConfig": {
@@ -392,9 +365,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -408,8 +378,8 @@
         "IERC721Mintable"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilBidder.sol": {
-      "lastModificationDate": 1777080584786,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/EvilBidder.sol": {
+      "lastModificationDate": 1777141863330,
       "contentHash": "376473659542da68a4c8038dc0b20bdd",
       "sourceName": "contracts/test/EvilBidder.sol",
       "solcConfig": {
@@ -433,9 +403,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -447,8 +414,8 @@
         "RejectETH"
       ]
     },
-    "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilBuyer.sol": {
-      "lastModificationDate": 1777077491890,
+    "/home/rlassman/web3/security-audit/artdao/contracts/test/EvilBuyer.sol": {
+      "lastModificationDate": 1777073884915,
       "contentHash": "f3289b78850a0c980a1afc614fcff2cc",
       "sourceName": "contracts/test/EvilBuyer.sol",
       "solcConfig": {
@@ -472,9 +439,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
