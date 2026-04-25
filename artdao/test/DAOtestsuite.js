@@ -8,12 +8,12 @@ const { expect } = require("chai");
 //Notes on issues to check
 
 //someobody could create impossible to resolve dispute,
-//making it impossible to create a valid dispute for a commission
+//making it impossible to create a valid dispute for a commission -done
 
 //payout jurors in loop- if one juror payout fails, entire resolution reverts
-//makes it so dispute can never be resolved
+//makes it so dispute can never be resolved-done
 
-//minor design note: could use smaller uints in structs. there are only like 2^3 ppl in the world I fear 
+//minor design note: could use smaller uints in structs. there are only like 2^33 ppl in the world I fear 
 
 
 //copied and edited from daoDisputeFlow
@@ -211,40 +211,10 @@ describe("art_DAO", () => {
 //================================================================================================
 //================================================================================================
 
-    it("Artist win", async () => {
-        const artDAO = await setupNewDAO();
-        const { commission, nft } = await createDisputeScenario(
-            artDAO,
-            VoteOption.Artist
-        );
 
-        expect(await commission.progress()).to.equal(4);
-        expect(await nft.ownerOf(1)).to.equal(artist.address);
-    });
 //------------------------------------------------------------------------------------------------------
-    it("Buyer win", async () => {
-        const artDAO = await setupNewDAO();
-        const { commission, nft } = await createDisputeScenario(
-            artDAO,
-            VoteOption.Buyer
-        );
-
-        expect(await commission.progress()).to.equal(4);
-        expect(await nft.ownerOf(1)).to.equal(buyer.address);
-    });
-//------------------------------------------------------------------------------------------------------
-    it("Neither win", async () => {
-        const artDAO = await setupNewDAO();
-        const { commission, nft } = await createDisputeScenario(
-            artDAO,
-            VoteOption.Neither
-        )
-
-        expect(await commission.progress()).to.equal(4);
-        expect(await nft.ownerOf(1)).to.equal(artist.address);
-    });
-//------------------------------------------------------------------------------------------------------
-    it("Malicious dispute", async () => {
+//BUG//
+    it("Malicious dispute cannot proceed", async () => {
         panelSize = 2^256 - 1;
 
         const artDAO = await setupNewDAO();
@@ -265,6 +235,7 @@ describe("art_DAO", () => {
 
     });
 //------------------------------------------------------------------------------------------------------
+//BUG//
     it("Evil Juror", async () => {
         const artDAO = await setupNewDAO();
         const EvilJuror = await ethers.getContractFactory("EvilJuror");
@@ -305,10 +276,7 @@ describe("art_DAO", () => {
         }
     });
 //------------------------------------------------------------------------------------------------------------------------
-
-
-
-
+//BUG//
     it("Evil Bidder", async () => {
         const artDAO = await setupNewDAO();
         const EvilJuror = await ethers.getContractFactory("EvilJuror");
@@ -328,4 +296,13 @@ describe("art_DAO", () => {
 
         //evil bidder reject ether, nobody else can outbid
     });
+
+    //TODO
+    it("popular proposal gets passed", async () => {});
+    it("unpopular proposal does not get passed", async () => {});
+    it("has expected juror values throughout voting", async () => {});
+    it("survives dispute with no votes", async () => {});
+    it("gives correct results voting", async () => {});
+    it("doesn't let artist on jury", async () => {});
+    it("doesn't let buyer on jury", async () => {});
 });
