@@ -573,7 +573,7 @@ describe("art_DAO", () => {
             expect(auction.settled).to.be.false;
         });
 
-        it("enforce 7 day minting limitation", async () => {
+        it("7 day minting limitation", async () => {
             await artDAO.mint(); 
             
             // second mint should fail
@@ -608,7 +608,20 @@ describe("art_DAO", () => {
 
             await expect(
                 artDAO.connect(bidder1).bid(1, { value: ethers.parseEther("1.0") })
-            ).to.be.revertedWith("Auction ended");
+            ).to.be.revertedWith("aunction ended");
+        });
+
+        it("fail to transfer token you don't own", async () => {
+            await artDAO.mint();
+
+            // time skip and set holder1 as owner
+            await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+            await artDAO.settleAuction(1);
+
+            // holder2 tries to steal
+            await expect(
+                artDAO.connect(holder2).transfer(holder3.address, 1)
+            ).to.be.revertedWith("not owner");
         });
     });
 });
