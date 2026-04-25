@@ -1,0 +1,464 @@
+1,DeleteExpressionMutation,contracts/art_dao.sol,166:9,lastMintTime = block.timestamp,assert(true)
+2,AssignmentMutation,contracts/art_dao.sol,166:24,block.timestamp,0
+3,AssignmentMutation,contracts/art_dao.sol,166:24,block.timestamp,1
+4,DeleteExpressionMutation,contracts/art_dao.sol,167:9,nextTokenId = 1,assert(true)
+5,AssignmentMutation,contracts/art_dao.sol,167:23,1,0
+6,DeleteExpressionMutation,contracts/art_dao.sol,168:9,nextDisputeId = 1,assert(true)
+7,AssignmentMutation,contracts/art_dao.sol,168:25,1,0
+8,DeleteExpressionMutation,contracts/art_dao.sol,169:9,nextProposalId = 1,assert(true)
+9,AssignmentMutation,contracts/art_dao.sol,169:26,1,0
+10,DeleteExpressionMutation,contracts/art_dao.sol,171:9,_addHolderIfNeeded(address(this)),assert(true)
+11,DeleteExpressionMutation,contracts/art_dao.sol,182:9,"require(block.timestamp >= lastMintTime + MINT_INTERVAL, ""Mint interval not reached"")",assert(true)
+12,RequireMutation,contracts/art_dao.sol,182:17,block.timestamp >= lastMintTime + MINT_INTERVAL,true
+13,RequireMutation,contracts/art_dao.sol,182:17,block.timestamp >= lastMintTime + MINT_INTERVAL,false
+14,SwapArgumentsOperatorMutation,contracts/art_dao.sol,182:17,block.timestamp >= lastMintTime + MINT_INTERVAL,lastMintTime + MINT_INTERVAL >= block.timestamp
+15,BinaryOpMutation,contracts/art_dao.sol,182:48, + ,-
+16,BinaryOpMutation,contracts/art_dao.sol,182:48, + ,*
+17,BinaryOpMutation,contracts/art_dao.sol,182:48, + ,/
+18,BinaryOpMutation,contracts/art_dao.sol,182:48, + ,%
+19,BinaryOpMutation,contracts/art_dao.sol,182:48, + ,**
+20,DeleteExpressionMutation,contracts/art_dao.sol,185:9,nextTokenId++,assert(true)
+21,UnaryOperatorMutation,contracts/art_dao.sol,185:20,++,--
+22,DeleteExpressionMutation,contracts/art_dao.sol,187:9,"_moveToken(address(0), address(this), tokenId)",assert(true)
+23,DeleteExpressionMutation,contracts/art_dao.sol,189:9,lastMintTime = block.timestamp,assert(true)
+24,AssignmentMutation,contracts/art_dao.sol,189:24,block.timestamp,0
+25,AssignmentMutation,contracts/art_dao.sol,189:24,block.timestamp,1
+26,DeleteExpressionMutation,contracts/art_dao.sol,192:9,_startAuction(tokenId),assert(true)
+27,DeleteExpressionMutation,contracts/art_dao.sol,199:9,"require(tokenOwner[tokenId] == address(this), ""Token not owned by contract"")",assert(true)
+28,RequireMutation,contracts/art_dao.sol,199:17,tokenOwner[tokenId] == address(this),true
+29,RequireMutation,contracts/art_dao.sol,199:17,tokenOwner[tokenId] == address(this),false
+30,DeleteExpressionMutation,contracts/art_dao.sol,202:9,auction.tokenId = tokenId,assert(true)
+31,AssignmentMutation,contracts/art_dao.sol,202:27,tokenId,0
+32,AssignmentMutation,contracts/art_dao.sol,202:27,tokenId,1
+33,DeleteExpressionMutation,contracts/art_dao.sol,203:9,auction.startTime = block.timestamp,assert(true)
+34,AssignmentMutation,contracts/art_dao.sol,203:29,block.timestamp,0
+35,AssignmentMutation,contracts/art_dao.sol,203:29,block.timestamp,1
+36,DeleteExpressionMutation,contracts/art_dao.sol,204:9,auction.endTime = block.timestamp + AUCTION_DURATION,assert(true)
+37,AssignmentMutation,contracts/art_dao.sol,204:27,block.timestamp + AUCTION_DURATION,0
+38,AssignmentMutation,contracts/art_dao.sol,204:27,block.timestamp + AUCTION_DURATION,1
+39,BinaryOpMutation,contracts/art_dao.sol,204:42, + ,-
+40,BinaryOpMutation,contracts/art_dao.sol,204:42, + ,*
+41,BinaryOpMutation,contracts/art_dao.sol,204:42, + ,/
+42,BinaryOpMutation,contracts/art_dao.sol,204:42, + ,%
+43,BinaryOpMutation,contracts/art_dao.sol,204:42, + ,**
+44,DeleteExpressionMutation,contracts/art_dao.sol,205:9,auction.highestBid = 0,assert(true)
+45,AssignmentMutation,contracts/art_dao.sol,205:30,0,1
+46,DeleteExpressionMutation,contracts/art_dao.sol,206:9,auction.highestBidder = address(0),assert(true)
+47,DeleteExpressionMutation,contracts/art_dao.sol,207:9,auction.settled = false,assert(true)
+48,AssignmentMutation,contracts/art_dao.sol,207:27,false,true
+49,DeleteExpressionMutation,contracts/art_dao.sol,218:9,"require(block.timestamp >= auction.startTime, ""Auction not started"")",assert(true)
+50,RequireMutation,contracts/art_dao.sol,218:17,block.timestamp >= auction.startTime,true
+51,RequireMutation,contracts/art_dao.sol,218:17,block.timestamp >= auction.startTime,false
+52,SwapArgumentsOperatorMutation,contracts/art_dao.sol,218:17,block.timestamp >= auction.startTime,auction.startTime >= block.timestamp
+53,DeleteExpressionMutation,contracts/art_dao.sol,219:9,"require(block.timestamp <= auction.endTime, ""Auction ended"")",assert(true)
+54,RequireMutation,contracts/art_dao.sol,219:17,block.timestamp <= auction.endTime,true
+55,RequireMutation,contracts/art_dao.sol,219:17,block.timestamp <= auction.endTime,false
+56,SwapArgumentsOperatorMutation,contracts/art_dao.sol,219:17,block.timestamp <= auction.endTime,auction.endTime <= block.timestamp
+57,DeleteExpressionMutation,contracts/art_dao.sol,220:9,"require(!auction.settled, ""Auction already settled"")",assert(true)
+58,RequireMutation,contracts/art_dao.sol,220:17,!auction.settled,true
+59,RequireMutation,contracts/art_dao.sol,220:17,!auction.settled,false
+60,DeleteExpressionMutation,contracts/art_dao.sol,221:9,"require(msg.value > auction.highestBid, ""Bid too low"")",assert(true)
+61,RequireMutation,contracts/art_dao.sol,221:17,msg.value > auction.highestBid,true
+62,RequireMutation,contracts/art_dao.sol,221:17,msg.value > auction.highestBid,false
+63,SwapArgumentsOperatorMutation,contracts/art_dao.sol,221:17,msg.value > auction.highestBid,auction.highestBid > msg.value
+64,IfStatementMutation,contracts/art_dao.sol,224:13,auction.highestBidder != address(0),true
+65,IfStatementMutation,contracts/art_dao.sol,224:13,auction.highestBidder != address(0),false
+66,DeleteExpressionMutation,contracts/art_dao.sol,225:13,payable(auction.highestBidder).transfer(auction.highestBid),assert(true)
+67,DeleteExpressionMutation,contracts/art_dao.sol,228:9,auction.highestBid = msg.value,assert(true)
+68,AssignmentMutation,contracts/art_dao.sol,228:30,msg.value,0
+69,AssignmentMutation,contracts/art_dao.sol,228:30,msg.value,1
+70,DeleteExpressionMutation,contracts/art_dao.sol,229:9,auction.highestBidder = msg.sender,assert(true)
+71,DeleteExpressionMutation,contracts/art_dao.sol,240:9,"require(block.timestamp > auction.endTime, ""Auction still ongoing"")",assert(true)
+72,RequireMutation,contracts/art_dao.sol,240:17,block.timestamp > auction.endTime,true
+73,RequireMutation,contracts/art_dao.sol,240:17,block.timestamp > auction.endTime,false
+74,SwapArgumentsOperatorMutation,contracts/art_dao.sol,240:17,block.timestamp > auction.endTime,auction.endTime > block.timestamp
+75,DeleteExpressionMutation,contracts/art_dao.sol,241:9,"require(!auction.settled, ""Auction already settled"")",assert(true)
+76,RequireMutation,contracts/art_dao.sol,241:17,!auction.settled,true
+77,RequireMutation,contracts/art_dao.sol,241:17,!auction.settled,false
+78,DeleteExpressionMutation,contracts/art_dao.sol,243:9,auction.settled = true,assert(true)
+79,AssignmentMutation,contracts/art_dao.sol,243:27,true,false
+80,IfStatementMutation,contracts/art_dao.sol,245:13,auction.highestBidder != address(0),true
+81,IfStatementMutation,contracts/art_dao.sol,245:13,auction.highestBidder != address(0),false
+82,DeleteExpressionMutation,contracts/art_dao.sol,246:13,"_moveToken(address(this), auction.highestBidder, tokenId)",assert(true)
+83,DeleteExpressionMutation,contracts/art_dao.sol,257:9,"require(tokenOwner[tokenId] == msg.sender, ""Not owner"")",assert(true)
+84,RequireMutation,contracts/art_dao.sol,257:17,tokenOwner[tokenId] == msg.sender,true
+85,RequireMutation,contracts/art_dao.sol,257:17,tokenOwner[tokenId] == msg.sender,false
+86,DeleteExpressionMutation,contracts/art_dao.sol,258:9,"require(to != address(0), ""Invalid recipient"")",assert(true)
+87,RequireMutation,contracts/art_dao.sol,258:17,to != address(0),true
+88,RequireMutation,contracts/art_dao.sol,258:17,to != address(0),false
+89,DeleteExpressionMutation,contracts/art_dao.sol,260:9,"_moveToken(msg.sender, to, tokenId)",assert(true)
+90,DeleteExpressionMutation,contracts/art_dao.sol,298:9,"require(commission != address(0), ""Invalid commission"")",assert(true)
+91,RequireMutation,contracts/art_dao.sol,298:17,commission != address(0),true
+92,RequireMutation,contracts/art_dao.sol,298:17,commission != address(0),false
+93,DeleteExpressionMutation,contracts/art_dao.sol,299:9,"require(panelSize > 0, ""Panel size must be > 0"")",assert(true)
+94,RequireMutation,contracts/art_dao.sol,299:17,panelSize > 0,true
+95,RequireMutation,contracts/art_dao.sol,299:17,panelSize > 0,false
+96,SwapArgumentsOperatorMutation,contracts/art_dao.sol,299:17,panelSize > 0,0 > panelSize
+97,DeleteExpressionMutation,contracts/art_dao.sol,300:9,"require(votingDuration > 0, ""Voting duration must be > 0"")",assert(true)
+98,RequireMutation,contracts/art_dao.sol,300:17,votingDuration > 0,true
+99,RequireMutation,contracts/art_dao.sol,300:17,votingDuration > 0,false
+100,SwapArgumentsOperatorMutation,contracts/art_dao.sol,300:17,votingDuration > 0,0 > votingDuration
+101,DeleteExpressionMutation,contracts/art_dao.sol,301:9,"require(!commissionHasActiveDispute[commission], ""Commission already has active dispute"")",assert(true)
+102,RequireMutation,contracts/art_dao.sol,301:17,!commissionHasActiveDispute[commission],true
+103,RequireMutation,contracts/art_dao.sol,301:17,!commissionHasActiveDispute[commission],false
+104,DeleteExpressionMutation,contracts/art_dao.sol,303:9,disputeId = nextDisputeId,assert(true)
+105,AssignmentMutation,contracts/art_dao.sol,303:21,nextDisputeId,0
+106,AssignmentMutation,contracts/art_dao.sol,303:21,nextDisputeId,1
+107,DeleteExpressionMutation,contracts/art_dao.sol,304:9,nextDisputeId++,assert(true)
+108,UnaryOperatorMutation,contracts/art_dao.sol,304:22,++,--
+109,DeleteExpressionMutation,contracts/art_dao.sol,307:9,d.commission = commission,assert(true)
+110,DeleteExpressionMutation,contracts/art_dao.sol,308:9,d.panelSize = panelSize,assert(true)
+111,AssignmentMutation,contracts/art_dao.sol,308:23,panelSize,0
+112,AssignmentMutation,contracts/art_dao.sol,308:23,panelSize,1
+113,DeleteExpressionMutation,contracts/art_dao.sol,309:9,d.panelSelected = false,assert(true)
+114,AssignmentMutation,contracts/art_dao.sol,309:27,false,true
+115,DeleteExpressionMutation,contracts/art_dao.sol,310:9,d.resolved = false,assert(true)
+116,AssignmentMutation,contracts/art_dao.sol,310:22,false,true
+117,DeleteExpressionMutation,contracts/art_dao.sol,311:9,d.votingStart = 0,assert(true)
+118,AssignmentMutation,contracts/art_dao.sol,311:25,0,1
+119,DeleteExpressionMutation,contracts/art_dao.sol,312:9,d.votingEnd = 0,assert(true)
+120,AssignmentMutation,contracts/art_dao.sol,312:23,0,1
+121,DeleteExpressionMutation,contracts/art_dao.sol,314:9,commissionHasActiveDispute[commission] = true,assert(true)
+122,AssignmentMutation,contracts/art_dao.sol,314:50,true,false
+123,DeleteExpressionMutation,contracts/art_dao.sol,339:9,"require(d.commission != address(0), ""Dispute does not exist"")",assert(true)
+124,RequireMutation,contracts/art_dao.sol,339:17,d.commission != address(0),true
+125,RequireMutation,contracts/art_dao.sol,339:17,d.commission != address(0),false
+126,DeleteExpressionMutation,contracts/art_dao.sol,340:9,"require(!d.panelSelected, ""Panel already selected"")",assert(true)
+127,RequireMutation,contracts/art_dao.sol,340:17,!d.panelSelected,true
+128,RequireMutation,contracts/art_dao.sol,340:17,!d.panelSelected,false
+129,DeleteExpressionMutation,contracts/art_dao.sol,341:9,"require(!d.resolved, ""Dispute already resolved"")",assert(true)
+130,RequireMutation,contracts/art_dao.sol,341:17,!d.resolved,true
+131,RequireMutation,contracts/art_dao.sol,341:17,!d.resolved,false
+132,DeleteExpressionMutation,contracts/art_dao.sol,342:9,"require(votingDuration > 0, ""Voting duration must be > 0"")",assert(true)
+133,RequireMutation,contracts/art_dao.sol,342:17,votingDuration > 0,true
+134,RequireMutation,contracts/art_dao.sol,342:17,votingDuration > 0,false
+135,SwapArgumentsOperatorMutation,contracts/art_dao.sol,342:17,votingDuration > 0,0 > votingDuration
+136,DeleteExpressionMutation,contracts/art_dao.sol,354:9,"require(candidateCount >= d.panelSize, ""Not enough eligible holders"")",assert(true)
+137,RequireMutation,contracts/art_dao.sol,354:17,candidateCount >= d.panelSize,true
+138,RequireMutation,contracts/art_dao.sol,354:17,candidateCount >= d.panelSize,false
+139,SwapArgumentsOperatorMutation,contracts/art_dao.sol,354:17,candidateCount >= d.panelSize,d.panelSize >= candidateCount
+140,DeleteExpressionMutation,contracts/art_dao.sol,355:9,"require(totalWeight > 0, ""No eligible holders"")",assert(true)
+141,RequireMutation,contracts/art_dao.sol,355:17,totalWeight > 0,true
+142,RequireMutation,contracts/art_dao.sol,355:17,totalWeight > 0,false
+143,SwapArgumentsOperatorMutation,contracts/art_dao.sol,355:17,totalWeight > 0,0 > totalWeight
+144,BinaryOpMutation,contracts/art_dao.sol,371:14, % ,+
+145,BinaryOpMutation,contracts/art_dao.sol,371:14, % ,-
+146,BinaryOpMutation,contracts/art_dao.sol,371:14, % ,*
+147,BinaryOpMutation,contracts/art_dao.sol,371:14, % ,/
+148,BinaryOpMutation,contracts/art_dao.sol,371:14, % ,**
+149,IfStatementMutation,contracts/art_dao.sol,377:21,picked[j],true
+150,IfStatementMutation,contracts/art_dao.sol,377:21,picked[j],false
+151,DeleteExpressionMutation,contracts/art_dao.sol,379:17,runningWeight += weights[j],assert(true)
+152,AssignmentMutation,contracts/art_dao.sol,379:34,weights[j],0
+153,AssignmentMutation,contracts/art_dao.sol,379:34,weights[j],1
+154,IfStatementMutation,contracts/art_dao.sol,380:21,rand < runningWeight,true
+155,IfStatementMutation,contracts/art_dao.sol,380:21,rand < runningWeight,false
+156,SwapArgumentsOperatorMutation,contracts/art_dao.sol,380:21,rand < runningWeight,runningWeight < rand
+157,DeleteExpressionMutation,contracts/art_dao.sol,381:21,selectedIndex = j,assert(true)
+158,AssignmentMutation,contracts/art_dao.sol,381:37,j,0
+159,AssignmentMutation,contracts/art_dao.sol,381:37,j,1
+160,SwapArgumentsOperatorMutation,contracts/art_dao.sol,376:33,j < candidateCount,candidateCount < j
+161,DeleteExpressionMutation,contracts/art_dao.sol,376:53,j++,assert(true)
+162,UnaryOperatorMutation,contracts/art_dao.sol,376:54,++,--
+163,DeleteExpressionMutation,contracts/art_dao.sol,386:13,"require(selectedIndex != type(uint256).max, ""Juror selection failed"")",assert(true)
+164,RequireMutation,contracts/art_dao.sol,386:21,selectedIndex != type(uint256).max,true
+165,RequireMutation,contracts/art_dao.sol,386:21,selectedIndex != type(uint256).max,false
+166,DeleteExpressionMutation,contracts/art_dao.sol,388:13,picked[selectedIndex] = true,assert(true)
+167,AssignmentMutation,contracts/art_dao.sol,388:37,true,false
+168,DeleteExpressionMutation,contracts/art_dao.sol,389:13,totalWeight -= weights[selectedIndex],assert(true)
+169,AssignmentMutation,contracts/art_dao.sol,389:28,weights[selectedIndex],0
+170,AssignmentMutation,contracts/art_dao.sol,389:28,weights[selectedIndex],1
+171,DeleteExpressionMutation,contracts/art_dao.sol,391:13,d.jurors.push(candidates[selectedIndex]),assert(true)
+172,DeleteExpressionMutation,contracts/art_dao.sol,392:13,d.totalJurorVotingPower += weights[selectedIndex],assert(true)
+173,AssignmentMutation,contracts/art_dao.sol,392:40,weights[selectedIndex],0
+174,AssignmentMutation,contracts/art_dao.sol,392:40,weights[selectedIndex],1
+175,SwapArgumentsOperatorMutation,contracts/art_dao.sol,359:29,i < d.panelSize,d.panelSize < i
+176,DeleteExpressionMutation,contracts/art_dao.sol,359:46,i++,assert(true)
+177,UnaryOperatorMutation,contracts/art_dao.sol,359:47,++,--
+178,DeleteExpressionMutation,contracts/art_dao.sol,397:9,d.panelSelected = true,assert(true)
+179,AssignmentMutation,contracts/art_dao.sol,397:27,true,false
+180,DeleteExpressionMutation,contracts/art_dao.sol,398:9,d.votingStart = block.timestamp,assert(true)
+181,AssignmentMutation,contracts/art_dao.sol,398:25,block.timestamp,0
+182,AssignmentMutation,contracts/art_dao.sol,398:25,block.timestamp,1
+183,DeleteExpressionMutation,contracts/art_dao.sol,399:9,d.votingEnd = block.timestamp + votingDuration,assert(true)
+184,AssignmentMutation,contracts/art_dao.sol,399:23,block.timestamp + votingDuration,0
+185,AssignmentMutation,contracts/art_dao.sol,399:23,block.timestamp + votingDuration,1
+186,BinaryOpMutation,contracts/art_dao.sol,399:38, + ,-
+187,BinaryOpMutation,contracts/art_dao.sol,399:38, + ,*
+188,BinaryOpMutation,contracts/art_dao.sol,399:38, + ,/
+189,BinaryOpMutation,contracts/art_dao.sol,399:38, + ,%
+190,BinaryOpMutation,contracts/art_dao.sol,399:38, + ,**
+191,DeleteExpressionMutation,contracts/art_dao.sol,408:9,"require(d.commission != address(0), ""Dispute does not exist"")",assert(true)
+192,RequireMutation,contracts/art_dao.sol,408:17,d.commission != address(0),true
+193,RequireMutation,contracts/art_dao.sol,408:17,d.commission != address(0),false
+194,DeleteExpressionMutation,contracts/art_dao.sol,409:9,"require(d.panelSelected, ""Panel not selected"")",assert(true)
+195,RequireMutation,contracts/art_dao.sol,409:17,d.panelSelected,true
+196,RequireMutation,contracts/art_dao.sol,409:17,d.panelSelected,false
+197,DeleteExpressionMutation,contracts/art_dao.sol,410:9,"require(!d.resolved, ""Dispute already resolved"")",assert(true)
+198,RequireMutation,contracts/art_dao.sol,410:17,!d.resolved,true
+199,RequireMutation,contracts/art_dao.sol,410:17,!d.resolved,false
+200,DeleteExpressionMutation,contracts/art_dao.sol,411:9,"require(block.timestamp <= d.votingEnd, ""Voting ended"")",assert(true)
+201,RequireMutation,contracts/art_dao.sol,411:17,block.timestamp <= d.votingEnd,true
+202,RequireMutation,contracts/art_dao.sol,411:17,block.timestamp <= d.votingEnd,false
+203,SwapArgumentsOperatorMutation,contracts/art_dao.sol,411:17,block.timestamp <= d.votingEnd,d.votingEnd <= block.timestamp
+204,DeleteExpressionMutation,contracts/art_dao.sol,412:9,"require(option != VoteOption.None, ""Invalid vote"")",assert(true)
+205,RequireMutation,contracts/art_dao.sol,412:17,option != VoteOption.None,true
+206,RequireMutation,contracts/art_dao.sol,412:17,option != VoteOption.None,false
+207,DeleteExpressionMutation,contracts/art_dao.sol,413:9,"require(_isJuror(disputeId, msg.sender), ""Not selected juror"")",assert(true)
+208,RequireMutation,contracts/art_dao.sol,413:17,"_isJuror(disputeId, msg.sender)",true
+209,RequireMutation,contracts/art_dao.sol,413:17,"_isJuror(disputeId, msg.sender)",false
+210,DeleteExpressionMutation,contracts/art_dao.sol,414:9,"require(d.usedVotingPower[msg.sender] == 0, ""Already voted"")",assert(true)
+211,RequireMutation,contracts/art_dao.sol,414:17,d.usedVotingPower[msg.sender] == 0,true
+212,RequireMutation,contracts/art_dao.sol,414:17,d.usedVotingPower[msg.sender] == 0,false
+213,DeleteExpressionMutation,contracts/art_dao.sol,417:9,"require(votingPower > 0, ""No voting power"")",assert(true)
+214,RequireMutation,contracts/art_dao.sol,417:17,votingPower > 0,true
+215,RequireMutation,contracts/art_dao.sol,417:17,votingPower > 0,false
+216,SwapArgumentsOperatorMutation,contracts/art_dao.sol,417:17,votingPower > 0,0 > votingPower
+217,DeleteExpressionMutation,contracts/art_dao.sol,419:9,d.usedVotingPower[msg.sender] = votingPower,assert(true)
+218,AssignmentMutation,contracts/art_dao.sol,419:41,votingPower,0
+219,AssignmentMutation,contracts/art_dao.sol,419:41,votingPower,1
+220,DeleteExpressionMutation,contracts/art_dao.sol,420:9,d.voteOf[msg.sender] = option,assert(true)
+221,IfStatementMutation,contracts/art_dao.sol,422:13,option == VoteOption.Artist,true
+222,IfStatementMutation,contracts/art_dao.sol,422:13,option == VoteOption.Artist,false
+223,IfStatementMutation,contracts/art_dao.sol,424:20,option == VoteOption.Buyer,true
+224,IfStatementMutation,contracts/art_dao.sol,424:20,option == VoteOption.Buyer,false
+225,IfStatementMutation,contracts/art_dao.sol,426:20,option == VoteOption.Neither,true
+226,IfStatementMutation,contracts/art_dao.sol,426:20,option == VoteOption.Neither,false
+227,DeleteExpressionMutation,contracts/art_dao.sol,427:13,d.neitherVotes += votingPower,assert(true)
+228,AssignmentMutation,contracts/art_dao.sol,427:31,votingPower,0
+229,AssignmentMutation,contracts/art_dao.sol,427:31,votingPower,1
+230,DeleteExpressionMutation,contracts/art_dao.sol,425:13,d.buyerVotes += votingPower,assert(true)
+231,AssignmentMutation,contracts/art_dao.sol,425:29,votingPower,0
+232,AssignmentMutation,contracts/art_dao.sol,425:29,votingPower,1
+233,DeleteExpressionMutation,contracts/art_dao.sol,423:13,d.artistVotes += votingPower,assert(true)
+234,AssignmentMutation,contracts/art_dao.sol,423:30,votingPower,0
+235,AssignmentMutation,contracts/art_dao.sol,423:30,votingPower,1
+236,DeleteExpressionMutation,contracts/art_dao.sol,443:9,"require(d.commission != address(0), ""Dispute does not exist"")",assert(true)
+237,RequireMutation,contracts/art_dao.sol,443:17,d.commission != address(0),true
+238,RequireMutation,contracts/art_dao.sol,443:17,d.commission != address(0),false
+239,DeleteExpressionMutation,contracts/art_dao.sol,444:9,"require(d.panelSelected, ""Panel not selected"")",assert(true)
+240,RequireMutation,contracts/art_dao.sol,444:17,d.panelSelected,true
+241,RequireMutation,contracts/art_dao.sol,444:17,d.panelSelected,false
+242,DeleteExpressionMutation,contracts/art_dao.sol,445:9,"require(!d.resolved, ""Already resolved"")",assert(true)
+243,RequireMutation,contracts/art_dao.sol,445:17,!d.resolved,true
+244,RequireMutation,contracts/art_dao.sol,445:17,!d.resolved,false
+245,RequireMutation,contracts/art_dao.sol,447:13,block.timestamp > d.votingEnd || _allJurorsVoted(disputeId),true
+246,RequireMutation,contracts/art_dao.sol,447:13,block.timestamp > d.votingEnd || _allJurorsVoted(disputeId),false
+247,SwapArgumentsOperatorMutation,contracts/art_dao.sol,447:13,block.timestamp > d.votingEnd,d.votingEnd > block.timestamp
+248,DeleteExpressionMutation,contracts/art_dao.sol,453:9,d.resolved = true,assert(true)
+249,AssignmentMutation,contracts/art_dao.sol,453:22,true,false
+250,DeleteExpressionMutation,contracts/art_dao.sol,454:9,commissionHasActiveDispute[d.commission] = false,assert(true)
+251,AssignmentMutation,contracts/art_dao.sol,454:52,false,true
+252,IfStatementMutation,contracts/art_dao.sol,456:13,outcome == VoteOption.Artist,true
+253,IfStatementMutation,contracts/art_dao.sol,456:13,outcome == VoteOption.Artist,false
+254,IfStatementMutation,contracts/art_dao.sol,458:20,outcome == VoteOption.Buyer,true
+255,IfStatementMutation,contracts/art_dao.sol,458:20,outcome == VoteOption.Buyer,false
+256,DeleteExpressionMutation,contracts/art_dao.sol,461:13,IArtCommission(d.commission).neitherWins(),assert(true)
+257,DeleteExpressionMutation,contracts/art_dao.sol,459:13,IArtCommission(d.commission).buyerWins(),assert(true)
+258,DeleteExpressionMutation,contracts/art_dao.sol,457:13,IArtCommission(d.commission).artistWins(),assert(true)
+259,IfStatementMutation,contracts/art_dao.sol,466:17,d.usedVotingPower[juror] > 0,true
+260,IfStatementMutation,contracts/art_dao.sol,466:17,d.usedVotingPower[juror] > 0,false
+261,SwapArgumentsOperatorMutation,contracts/art_dao.sol,466:17,d.usedVotingPower[juror] > 0,0 > d.usedVotingPower[juror]
+262,DeleteExpressionMutation,contracts/art_dao.sol,467:17,payable(juror).transfer(JURY_REWARD),assert(true)
+263,SwapArgumentsOperatorMutation,contracts/art_dao.sol,464:29,i < d.jurors.length,d.jurors.length < i
+264,DeleteExpressionMutation,contracts/art_dao.sol,464:50,i++,assert(true)
+265,UnaryOperatorMutation,contracts/art_dao.sol,464:51,++,--
+266,SwapArgumentsOperatorMutation,contracts/art_dao.sol,510:17,d.usedVotingPower[juror] > 0,0 > d.usedVotingPower[juror]
+267,IfStatementMutation,contracts/art_dao.sol,529:13,!holderExists[holder],true
+268,IfStatementMutation,contracts/art_dao.sol,529:13,!holderExists[holder],false
+269,DeleteExpressionMutation,contracts/art_dao.sol,530:13,holderExists[holder] = true,assert(true)
+270,AssignmentMutation,contracts/art_dao.sol,530:36,true,false
+271,DeleteExpressionMutation,contracts/art_dao.sol,531:13,holders.push(holder),assert(true)
+272,IfStatementMutation,contracts/art_dao.sol,541:13,from != address(0),true
+273,IfStatementMutation,contracts/art_dao.sol,541:13,from != address(0),false
+274,DeleteExpressionMutation,contracts/art_dao.sol,546:13,totalSupply++,assert(true)
+275,UnaryOperatorMutation,contracts/art_dao.sol,546:24,++,--
+276,DeleteExpressionMutation,contracts/art_dao.sol,542:13,"require(tokenOwner[tokenId] == from, ""Incorrect owner"")",assert(true)
+277,RequireMutation,contracts/art_dao.sol,542:21,tokenOwner[tokenId] == from,true
+278,RequireMutation,contracts/art_dao.sol,542:21,tokenOwner[tokenId] == from,false
+279,DeleteExpressionMutation,contracts/art_dao.sol,543:13,"require(holderBalance[from] > 0, ""Insufficient holder balance"")",assert(true)
+280,RequireMutation,contracts/art_dao.sol,543:21,holderBalance[from] > 0,true
+281,RequireMutation,contracts/art_dao.sol,543:21,holderBalance[from] > 0,false
+282,SwapArgumentsOperatorMutation,contracts/art_dao.sol,543:21,holderBalance[from] > 0,0 > holderBalance[from]
+283,DeleteExpressionMutation,contracts/art_dao.sol,544:13,holderBalance[from]--,assert(true)
+284,UnaryOperatorMutation,contracts/art_dao.sol,544:32,--,++
+285,DeleteExpressionMutation,contracts/art_dao.sol,549:9,_addHolderIfNeeded(to),assert(true)
+286,DeleteExpressionMutation,contracts/art_dao.sol,550:9,holderBalance[to]++,assert(true)
+287,UnaryOperatorMutation,contracts/art_dao.sol,550:26,++,--
+288,DeleteExpressionMutation,contracts/art_dao.sol,551:9,tokenOwner[tokenId] = to,assert(true)
+289,DeleteExpressionMutation,contracts/art_dao.sol,573:9,candidates = new address[](holders.length),assert(true)
+290,DeleteExpressionMutation,contracts/art_dao.sol,574:9,weights = new uint256[](holders.length),assert(true)
+291,SwapArgumentsOperatorMutation,contracts/art_dao.sol,584:17,bal > 0,0 > bal
+292,DeleteExpressionMutation,contracts/art_dao.sol,586:17,candidates[candidateCount] = h,assert(true)
+293,DeleteExpressionMutation,contracts/art_dao.sol,587:17,weights[candidateCount] = bal,assert(true)
+294,AssignmentMutation,contracts/art_dao.sol,587:43,bal,0
+295,AssignmentMutation,contracts/art_dao.sol,587:43,bal,1
+296,DeleteExpressionMutation,contracts/art_dao.sol,588:17,totalWeight += bal,assert(true)
+297,AssignmentMutation,contracts/art_dao.sol,588:32,bal,0
+298,AssignmentMutation,contracts/art_dao.sol,588:32,bal,1
+299,DeleteExpressionMutation,contracts/art_dao.sol,589:17,candidateCount++,assert(true)
+300,UnaryOperatorMutation,contracts/art_dao.sol,589:31,++,--
+301,SwapArgumentsOperatorMutation,contracts/art_dao.sol,576:29,i < holders.length,holders.length < i
+302,DeleteExpressionMutation,contracts/art_dao.sol,576:49,i++,assert(true)
+303,UnaryOperatorMutation,contracts/art_dao.sol,576:50,++,--
+304,IfStatementMutation,contracts/art_dao.sol,601:17,d.jurors[i] == user,true
+305,IfStatementMutation,contracts/art_dao.sol,601:17,d.jurors[i] == user,false
+306,SwapArgumentsOperatorMutation,contracts/art_dao.sol,600:29,i < d.jurors.length,d.jurors.length < i
+307,DeleteExpressionMutation,contracts/art_dao.sol,600:50,i++,assert(true)
+308,UnaryOperatorMutation,contracts/art_dao.sol,600:51,++,--
+309,IfStatementMutation,contracts/art_dao.sol,615:17,d.usedVotingPower[d.jurors[i]] == 0,true
+310,IfStatementMutation,contracts/art_dao.sol,615:17,d.usedVotingPower[d.jurors[i]] == 0,false
+311,SwapArgumentsOperatorMutation,contracts/art_dao.sol,614:29,i < d.jurors.length,d.jurors.length < i
+312,DeleteExpressionMutation,contracts/art_dao.sol,614:50,i++,assert(true)
+313,UnaryOperatorMutation,contracts/art_dao.sol,614:51,++,--
+314,BinaryOpMutation,contracts/art_dao.sol,634:35, + ,-
+315,BinaryOpMutation,contracts/art_dao.sol,634:35, + ,*
+316,BinaryOpMutation,contracts/art_dao.sol,634:35, + ,/
+317,BinaryOpMutation,contracts/art_dao.sol,634:35, + ,%
+318,BinaryOpMutation,contracts/art_dao.sol,634:35, + ,**
+319,BinaryOpMutation,contracts/art_dao.sol,634:31, + ,-
+320,BinaryOpMutation,contracts/art_dao.sol,634:31, + ,*
+321,BinaryOpMutation,contracts/art_dao.sol,634:31, + ,/
+322,BinaryOpMutation,contracts/art_dao.sol,634:31, + ,%
+323,BinaryOpMutation,contracts/art_dao.sol,634:31, + ,**
+324,IfStatementMutation,contracts/art_dao.sol,636:13,totalVoted == 0,true
+325,IfStatementMutation,contracts/art_dao.sol,636:13,totalVoted == 0,false
+326,BinaryOpMutation,contracts/art_dao.sol,640:39, / ,+
+327,BinaryOpMutation,contracts/art_dao.sol,640:39, / ,-
+328,BinaryOpMutation,contracts/art_dao.sol,640:39, / ,*
+329,BinaryOpMutation,contracts/art_dao.sol,640:39, / ,%
+330,SwapArgumentsOperatorMutation,contracts/art_dao.sol,640:24,totalVoted * 50 / 100,100 / totalVoted * 50
+331,BinaryOpMutation,contracts/art_dao.sol,640:34, * ,/
+332,BinaryOpMutation,contracts/art_dao.sol,640:34, * ,%
+333,BinaryOpMutation,contracts/art_dao.sol,640:34, * ,**
+334,IfStatementMutation,contracts/art_dao.sol,642:13,a > half,true
+335,IfStatementMutation,contracts/art_dao.sol,642:13,a > half,false
+336,SwapArgumentsOperatorMutation,contracts/art_dao.sol,642:13,a > half,half > a
+337,IfStatementMutation,contracts/art_dao.sol,646:13,b > half,true
+338,IfStatementMutation,contracts/art_dao.sol,646:13,b > half,false
+339,SwapArgumentsOperatorMutation,contracts/art_dao.sol,646:13,b > half,half > b
+340,IfStatementMutation,contracts/art_dao.sol,650:13,n > half,true
+341,IfStatementMutation,contracts/art_dao.sol,650:13,n > half,false
+342,SwapArgumentsOperatorMutation,contracts/art_dao.sol,650:13,n > half,half > n
+343,DeleteExpressionMutation,contracts/art_dao.sol,658:9,"require(holderBalance[msg.sender] > 0, ""Not a DAO member"")",assert(true)
+344,RequireMutation,contracts/art_dao.sol,658:17,holderBalance[msg.sender] > 0,true
+345,RequireMutation,contracts/art_dao.sol,658:17,holderBalance[msg.sender] > 0,false
+346,SwapArgumentsOperatorMutation,contracts/art_dao.sol,658:17,holderBalance[msg.sender] > 0,0 > holderBalance[msg.sender]
+347,DeleteExpressionMutation,contracts/art_dao.sol,659:9,"require(recipient != address(0), ""Invalid recipient"")",assert(true)
+348,RequireMutation,contracts/art_dao.sol,659:17,recipient != address(0),true
+349,RequireMutation,contracts/art_dao.sol,659:17,recipient != address(0),false
+350,DeleteExpressionMutation,contracts/art_dao.sol,660:9,"require(amount > 0, ""Amount must be positive"")",assert(true)
+351,RequireMutation,contracts/art_dao.sol,660:17,amount > 0,true
+352,RequireMutation,contracts/art_dao.sol,660:17,amount > 0,false
+353,SwapArgumentsOperatorMutation,contracts/art_dao.sol,660:17,amount > 0,0 > amount
+354,DeleteExpressionMutation,contracts/art_dao.sol,663:9,nextProposalId++,assert(true)
+355,UnaryOperatorMutation,contracts/art_dao.sol,663:23,++,--
+356,DeleteExpressionMutation,contracts/art_dao.sol,666:9,p.creator = msg.sender,assert(true)
+357,DeleteExpressionMutation,contracts/art_dao.sol,667:9,p.recipient = recipient,assert(true)
+358,DeleteExpressionMutation,contracts/art_dao.sol,668:9,p.amount = amount,assert(true)
+359,AssignmentMutation,contracts/art_dao.sol,668:20,amount,0
+360,AssignmentMutation,contracts/art_dao.sol,668:20,amount,1
+361,DeleteExpressionMutation,contracts/art_dao.sol,669:9,p.startTime = block.timestamp,assert(true)
+362,AssignmentMutation,contracts/art_dao.sol,669:23,block.timestamp,0
+363,AssignmentMutation,contracts/art_dao.sol,669:23,block.timestamp,1
+364,DeleteExpressionMutation,contracts/art_dao.sol,670:9,p.endTime = block.timestamp + 7 days,assert(true)
+365,AssignmentMutation,contracts/art_dao.sol,670:21,block.timestamp + 7 days,0
+366,AssignmentMutation,contracts/art_dao.sol,670:21,block.timestamp + 7 days,1
+367,BinaryOpMutation,contracts/art_dao.sol,670:36, + ,-
+368,BinaryOpMutation,contracts/art_dao.sol,670:36, + ,*
+369,BinaryOpMutation,contracts/art_dao.sol,670:36, + ,/
+370,BinaryOpMutation,contracts/art_dao.sol,670:36, + ,%
+371,BinaryOpMutation,contracts/art_dao.sol,670:36, + ,**
+372,DeleteExpressionMutation,contracts/art_dao.sol,671:9,p.executed = false,assert(true)
+373,AssignmentMutation,contracts/art_dao.sol,671:22,false,true
+374,DeleteExpressionMutation,contracts/art_dao.sol,672:9,p.totalVotingPower = totalSupply,assert(true)
+375,AssignmentMutation,contracts/art_dao.sol,672:30,totalSupply,0
+376,AssignmentMutation,contracts/art_dao.sol,672:30,totalSupply,1
+377,DeleteExpressionMutation,contracts/art_dao.sol,680:9,"require(p.creator != address(0), ""Proposal does not exist"")",assert(true)
+378,RequireMutation,contracts/art_dao.sol,680:17,p.creator != address(0),true
+379,RequireMutation,contracts/art_dao.sol,680:17,p.creator != address(0),false
+380,DeleteExpressionMutation,contracts/art_dao.sol,681:9,"require(block.timestamp <= p.endTime, ""Voting ended"")",assert(true)
+381,RequireMutation,contracts/art_dao.sol,681:17,block.timestamp <= p.endTime,true
+382,RequireMutation,contracts/art_dao.sol,681:17,block.timestamp <= p.endTime,false
+383,SwapArgumentsOperatorMutation,contracts/art_dao.sol,681:17,block.timestamp <= p.endTime,p.endTime <= block.timestamp
+384,DeleteExpressionMutation,contracts/art_dao.sol,682:9,"require(!p.executed, ""Proposal already executed"")",assert(true)
+385,RequireMutation,contracts/art_dao.sol,682:17,!p.executed,true
+386,RequireMutation,contracts/art_dao.sol,682:17,!p.executed,false
+387,DeleteExpressionMutation,contracts/art_dao.sol,685:9,"require(votingPower > 0, ""No voting power"")",assert(true)
+388,RequireMutation,contracts/art_dao.sol,685:17,votingPower > 0,true
+389,RequireMutation,contracts/art_dao.sol,685:17,votingPower > 0,false
+390,SwapArgumentsOperatorMutation,contracts/art_dao.sol,685:17,votingPower > 0,0 > votingPower
+391,DeleteExpressionMutation,contracts/art_dao.sol,686:9,"require(p.usedVotingPower[msg.sender] == 0, ""Already voted"")",assert(true)
+392,RequireMutation,contracts/art_dao.sol,686:17,p.usedVotingPower[msg.sender] == 0,true
+393,RequireMutation,contracts/art_dao.sol,686:17,p.usedVotingPower[msg.sender] == 0,false
+394,DeleteExpressionMutation,contracts/art_dao.sol,688:9,p.usedVotingPower[msg.sender] = votingPower,assert(true)
+395,AssignmentMutation,contracts/art_dao.sol,688:41,votingPower,0
+396,AssignmentMutation,contracts/art_dao.sol,688:41,votingPower,1
+397,IfStatementMutation,contracts/art_dao.sol,690:13,support,true
+398,IfStatementMutation,contracts/art_dao.sol,690:13,support,false
+399,DeleteExpressionMutation,contracts/art_dao.sol,693:13,p.againstVotes += votingPower,assert(true)
+400,AssignmentMutation,contracts/art_dao.sol,693:31,votingPower,0
+401,AssignmentMutation,contracts/art_dao.sol,693:31,votingPower,1
+402,DeleteExpressionMutation,contracts/art_dao.sol,691:13,p.forVotes += votingPower,assert(true)
+403,AssignmentMutation,contracts/art_dao.sol,691:27,votingPower,0
+404,AssignmentMutation,contracts/art_dao.sol,691:27,votingPower,1
+405,DeleteExpressionMutation,contracts/art_dao.sol,701:9,"require(p.creator != address(0), ""Proposal does not exist"")",assert(true)
+406,RequireMutation,contracts/art_dao.sol,701:17,p.creator != address(0),true
+407,RequireMutation,contracts/art_dao.sol,701:17,p.creator != address(0),false
+408,DeleteExpressionMutation,contracts/art_dao.sol,702:9,"require(block.timestamp > p.endTime, ""Voting not ended"")",assert(true)
+409,RequireMutation,contracts/art_dao.sol,702:17,block.timestamp > p.endTime,true
+410,RequireMutation,contracts/art_dao.sol,702:17,block.timestamp > p.endTime,false
+411,SwapArgumentsOperatorMutation,contracts/art_dao.sol,702:17,block.timestamp > p.endTime,p.endTime > block.timestamp
+412,DeleteExpressionMutation,contracts/art_dao.sol,703:9,"require(!p.executed, ""Proposal already executed"")",assert(true)
+413,RequireMutation,contracts/art_dao.sol,703:17,!p.executed,true
+414,RequireMutation,contracts/art_dao.sol,703:17,!p.executed,false
+415,BinaryOpMutation,contracts/art_dao.sol,705:40, + ,-
+416,BinaryOpMutation,contracts/art_dao.sol,705:40, + ,*
+417,BinaryOpMutation,contracts/art_dao.sol,705:40, + ,/
+418,BinaryOpMutation,contracts/art_dao.sol,705:40, + ,%
+419,BinaryOpMutation,contracts/art_dao.sol,705:40, + ,**
+420,DeleteExpressionMutation,contracts/art_dao.sol,706:9,"require(totalVotes > 0, ""No votes cast"")",assert(true)
+421,RequireMutation,contracts/art_dao.sol,706:17,totalVotes > 0,true
+422,RequireMutation,contracts/art_dao.sol,706:17,totalVotes > 0,false
+423,SwapArgumentsOperatorMutation,contracts/art_dao.sol,706:17,totalVotes > 0,0 > totalVotes
+424,BinaryOpMutation,contracts/art_dao.sol,708:52, / ,+
+425,BinaryOpMutation,contracts/art_dao.sol,708:52, / ,-
+426,BinaryOpMutation,contracts/art_dao.sol,708:52, / ,*
+427,BinaryOpMutation,contracts/art_dao.sol,708:52, / ,%
+428,SwapArgumentsOperatorMutation,contracts/art_dao.sol,708:29,p.totalVotingPower * 67 / 100,100 / p.totalVotingPower * 67
+429,BinaryOpMutation,contracts/art_dao.sol,708:47, * ,/
+430,BinaryOpMutation,contracts/art_dao.sol,708:47, * ,%
+431,BinaryOpMutation,contracts/art_dao.sol,708:47, * ,**
+432,DeleteExpressionMutation,contracts/art_dao.sol,709:9,"require(p.forVotes >= threshold, ""Insufficient support"")",assert(true)
+433,RequireMutation,contracts/art_dao.sol,709:17,p.forVotes >= threshold,true
+434,RequireMutation,contracts/art_dao.sol,709:17,p.forVotes >= threshold,false
+435,SwapArgumentsOperatorMutation,contracts/art_dao.sol,709:17,p.forVotes >= threshold,threshold >= p.forVotes
+436,DeleteExpressionMutation,contracts/art_dao.sol,711:9,p.executed = true,assert(true)
+437,AssignmentMutation,contracts/art_dao.sol,711:22,true,false
+438,DeleteExpressionMutation,contracts/art_dao.sol,712:9,payable(p.recipient).transfer(p.amount),assert(true)
+439,DeleteExpressionMutation,contracts/art_dao.sol,729:9,"require(p.creator != address(0), ""Proposal does not exist"")",assert(true)
+440,RequireMutation,contracts/art_dao.sol,729:17,p.creator != address(0),true
+441,RequireMutation,contracts/art_dao.sol,729:17,p.creator != address(0),false
+442,DeleteExpressionMutation,contracts/art_dao.sol,731:9,creator = p.creator,assert(true)
+443,DeleteExpressionMutation,contracts/art_dao.sol,732:9,recipient = p.recipient,assert(true)
+444,DeleteExpressionMutation,contracts/art_dao.sol,733:9,amount = p.amount,assert(true)
+445,AssignmentMutation,contracts/art_dao.sol,733:18,p.amount,0
+446,AssignmentMutation,contracts/art_dao.sol,733:18,p.amount,1
+447,DeleteExpressionMutation,contracts/art_dao.sol,734:9,startTime = p.startTime,assert(true)
+448,AssignmentMutation,contracts/art_dao.sol,734:21,p.startTime,0
+449,AssignmentMutation,contracts/art_dao.sol,734:21,p.startTime,1
+450,DeleteExpressionMutation,contracts/art_dao.sol,735:9,endTime = p.endTime,assert(true)
+451,AssignmentMutation,contracts/art_dao.sol,735:19,p.endTime,0
+452,AssignmentMutation,contracts/art_dao.sol,735:19,p.endTime,1
+453,DeleteExpressionMutation,contracts/art_dao.sol,736:9,forVotes = p.forVotes,assert(true)
+454,AssignmentMutation,contracts/art_dao.sol,736:20,p.forVotes,0
+455,AssignmentMutation,contracts/art_dao.sol,736:20,p.forVotes,1
+456,DeleteExpressionMutation,contracts/art_dao.sol,737:9,againstVotes = p.againstVotes,assert(true)
+457,AssignmentMutation,contracts/art_dao.sol,737:24,p.againstVotes,0
+458,AssignmentMutation,contracts/art_dao.sol,737:24,p.againstVotes,1
+459,DeleteExpressionMutation,contracts/art_dao.sol,738:9,executed = p.executed,assert(true)
+460,AssignmentMutation,contracts/art_dao.sol,738:20,p.executed,true
+461,AssignmentMutation,contracts/art_dao.sol,738:20,p.executed,false
+462,DeleteExpressionMutation,contracts/art_dao.sol,739:9,totalVotingPower = p.totalVotingPower,assert(true)
+463,AssignmentMutation,contracts/art_dao.sol,739:28,p.totalVotingPower,0
+464,AssignmentMutation,contracts/art_dao.sol,739:28,p.totalVotingPower,1
