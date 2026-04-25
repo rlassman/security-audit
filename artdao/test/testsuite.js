@@ -1,5 +1,15 @@
 /*
 Tests for Art Commission Contract
+
+Bugs Found:
+    - evil nft contract able to not actually transfer art
+        - extra bad because even if buyer wins dispute, will never receive art and state marked complete so nothing they can do
+        - should fix by checking after safeTransfer that comission contract is owner
+
+    - upfront payment gets locked in contract forever in disputes (artist or buyer wins)
+        - bad in previous scenario because buyer doesn't get refund of upfront payment or art
+
+    - comment has wrong threshold for insurance (not really a bug just something to be fixed lol)
 */
 
 // fixture (copied from codecoverage activity)
