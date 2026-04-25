@@ -305,4 +305,6 @@ describe("art_DAO", () => {
     it("gives correct results voting", async () => {});
     it("doesn't let artist on jury", async () => {});
     it("doesn't let buyer on jury", async () => {});
+    it("reverts on dispute with evil buyer", async () => {});
+    it("reverts on dispute with evil artist", async () => {});
 });
