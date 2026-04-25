@@ -9,6 +9,8 @@ Bugs Found:
     - upfront payment gets locked in contract forever in disputes (artist or buyer wins)
         - bad in previous scenario because buyer doesn't get refund of upfront payment or art
 
+    - good faith release can never be successfully called, both buyerBreakFaith and artistBreakFaith must be true before hitting require, not possible
+
     - comment has wrong threshold for insurance (not really a bug just something to be fixed lol)
 */
 
