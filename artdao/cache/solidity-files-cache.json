@@ -189,8 +189,8 @@
       ]
     },
     "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilJuror.sol": {
-      "lastModificationDate": 1777080444211,
-      "contentHash": "d9e16f21a9d4b786e710b8615b911202",
+      "lastModificationDate": 1777081818492,
+      "contentHash": "512b20212a4fa8944bbfed29399a4c59",
       "sourceName": "contracts/test/EvilJuror.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -304,7 +304,7 @@
       ]
     },
     "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/art_dao.sol": {
-      "lastModificationDate": 1776977718543,
+      "lastModificationDate": 1777081459803,
       "contentHash": "adfe4164ba1ab8488083e54497c07d0b",
       "sourceName": "contracts/art_dao.sol",
       "solcConfig": {
@@ -379,8 +379,8 @@
       ]
     },
     "/Users/oliviaboyer/Desktop/Web3/security-audit/artdao/contracts/test/EvilBidder.sol": {
-      "lastModificationDate": 1777049227668,
-      "contentHash": "325eccee4e07bf710d04827bedb8a30e",
+      "lastModificationDate": 1777080584786,
+      "contentHash": "376473659542da68a4c8038dc0b20bdd",
       "sourceName": "contracts/test/EvilBidder.sol",
       "solcConfig": {
         "version": "0.8.28",

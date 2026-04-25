@@ -117,12 +117,6 @@ describe("art_DAO", () => {
 
     }
 //------------------------------------------------------------------------------------------------------
-    //TODO simulate auction with only one bidder
-    //note: used in evil Juror test
-    async function unpopularAuction(artDAO) { 
-        await artDAO.mint();
-    }
-//------------------------------------------------------------------------------------------------------
     //function to execute successful commission with no dispute
     async function successfulTransaction(artDao) {
 
@@ -219,7 +213,9 @@ describe("art_DAO", () => {
 
 //================================================================================================
 //================================================================================================
-
+//              Tests
+//================================================================================================
+//================================================================================================
 
     it("Artist win", async () => {
         const artDAO = await setupNewDAO();
@@ -279,11 +275,12 @@ describe("art_DAO", () => {
         const artDAO = await setupNewDAO();
         const EvilJuror = await ethers.getContractFactory("EvilJuror");
         const eviljuror = await EvilJuror.deploy(artDAO, {value: 10000});
-        await unpopularAuction(artDAO);
+        await artDAO.mint();
         await eviljuror.makebid(4);
         await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
         await network.provider.send("evm_mine");
         await artDAO.settleAuction(4);
+        expect(await artDAO.balanceOf(await eviljuror.getAddress())).to.equal(1);
 
        panelSize = 3;
        let evil = false;
