@@ -231,6 +231,7 @@ describe("art_DAO", () => {
 
        // const jurors = await artDAO.getJurors(disputeId);
        expect(artDAO.getJurors(disputeId)).to.be.revertedWith("");
+       
         //expect(await jurors).to.exist;
 
     });
@@ -297,14 +298,87 @@ describe("art_DAO", () => {
         //evil bidder reject ether, nobody else can outbid
     });
 
+//------------------------------------------------------------------------------------------------------------------------
     //TODO
-    it("popular proposal gets passed", async () => {});
-    it("unpopular proposal does not get passed", async () => {});
+    //multiple votes, different types, majority in favor
+    it("popular proposal gets passed", async () => {
+        const artDAO = await setupNewDAO();
+        await artDAO.mint();
+
+        await artDAO
+            .connect(holder2)
+            .bid(4, { value: ethers.parseEther("0.01") });
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(4);
+        const holders = [holder1, holder2, holder3, holder4];
+        //const oldbal = await holder1.getBalance([ blockTag = "latest" ]);
+       const propid =  await artDAO
+            .connect(holder1)
+            .createProposal(holder1, 100); 
+        for (holder of holders) {
+           if (holder == holder4) {
+            await artDAO
+            .connect(holder)
+            .voteProposal(1n, false); 
+           } else{ 
+            await artDAO
+            .connect(holder)
+            .voteProposal(1n, true); 
+        //expect(true).to.equal(false);
+           }
+        }
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        expect(await artDAO.executeProposal(1n)).to.emit(artDAO, "ProposalExecuted" );
+        
+        
+    });
+    //multiple votes, different types, majority against
+    it("unpopular proposal does not get passed", async () => {
+         const artDAO = await setupNewDAO();
+        await artDAO.mint();
+
+        await artDAO
+            .connect(holder2)
+            .bid(4, { value: ethers.parseEther("0.01") });
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(4);
+        const holders = [holder1, holder2, holder3, holder4];
+        //const oldbal = await holder1.getBalance([ blockTag = "latest" ]);
+       const propid =  await artDAO
+            .connect(holder1)
+            .createProposal(holder1, 100); 
+        for (holder of holders) {
+           if (holder == holder4) {
+            await artDAO
+            .connect(holder)
+            .voteProposal(1n, true); 
+           } else{ 
+            await artDAO
+            .connect(holder)
+            .voteProposal(1n, false); 
+        //expect(true).to.equal(false);
+           }
+        }
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        expect(artDAO.executeProposal(1n)).to.be.revertedWith("Insufficient support");
+        
+    });
+    //voting process with extensive checks on juror values
     it("has expected juror values throughout voting", async () => {});
+    //checks dispute that ends with no votes
     it("survives dispute with no votes", async () => {});
+    //checks close votes
     it("gives correct results voting", async () => {});
+    //checks if artist can get on jury
     it("doesn't let artist on jury", async () => {});
+    //checks if buyer can get on jury
     it("doesn't let buyer on jury", async () => {});
+    //check dispute resolution where buyer reverts on receive
     it("reverts on dispute with evil buyer", async () => {});
+    //check dispute resolution where sender revert on receive
     it("reverts on dispute with evil artist", async () => {});
 });
