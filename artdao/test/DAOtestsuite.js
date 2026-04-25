@@ -111,12 +111,6 @@ describe("art_DAO", () => {
        return {commission, nft}; 
     }
 //------------------------------------------------------------------------------------------------------
-    //TODO simulate auction with multiple bidders
-    //note: simulate evil bidder that rejects eth to rig auction
-    async function competitiveAuction(artDAO) {
-
-    }
-//------------------------------------------------------------------------------------------------------
     //function to execute successful commission with no dispute
     async function successfulTransaction(artDao) {
 
@@ -316,6 +310,22 @@ describe("art_DAO", () => {
 
 
     it("Evil Bidder", async () => {
+        const artDAO = await setupNewDAO();
+        const EvilJuror = await ethers.getContractFactory("EvilJuror");
+        const eviljuror = await EvilJuror.deploy(artDAO, {value: 10000});
+
+        await artDAO.mint();
+
+        await eviljuror.makebid(4);
+
+        await expect(artDAO
+            .connect(holder1)
+            .bid(4, { value: ethers.parseEther("0.05") })).to.be.revertedWith("i'm evil");
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(4);
+        expect(await artDAO.balanceOf(await eviljuror.getAddress())).to.equal(1);
+
         //evil bidder reject ether, nobody else can outbid
     });
 });
