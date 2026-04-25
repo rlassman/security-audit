@@ -1,0 +1,2291 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts/art_dao.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> art_dao.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>156/156</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">67.86% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>95/140</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>27/27</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>225/225</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">77×</span>
+<span class="cline-any cline-yes">77×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">77×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-yes">59×</span>
+<span class="cline-any cline-yes">59×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">59×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">23×</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">143×</span>
+<span class="cline-any cline-yes">81×</span>
+<span class="cline-any cline-yes">81×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">121×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">61×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">121×</span>
+<span class="cline-any cline-yes">121×</span>
+<span class="cline-any cline-yes">121×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+&nbsp;
+/**
+ * @title Interface for the ArtCommission contract
+ * @dev The DAO uses this interface to read dispute participants and resolve the case.
+ */
+interface IArtCommission {
+    function artist() external view returns (address);
+    function buyer() external view returns (address);
+&nbsp;
+    function artistWins() external;
+    function buyerWins() external;
+    function neitherWins() external;
+}
+&nbsp;
+/**
+ * @title ArtDAO
+ * @dev This contract:
+ * 1. Maintains DAO NFT ownership
+ * 2. Runs NFT auctions
+ * 3. Selects jurors for disputes using weighted lottery
+ * 4. Accepts juror votes
+ * 5. Resolves disputes by calling the corresponding commission contract
+ *
+ * Important:
+ * The random selection here is good enough for a school project prototype,
+ * but not secure enough for production. In production, use Chainlink VRF or
+ * another secure randomness source.
+ */
+contract ArtDAO {
+    // =========================================================
+    //                         CONSTANTS
+    // =========================================================
+&nbsp;
+    uint256 public constant MINT_INTERVAL = 7 days;
+    uint256 public constant AUCTION_DURATION = 7 days;
+    uint256 public constant JURY_REWARD = 0.001 ether;
+&nbsp;
+    // =========================================================
+    //                          STATE
+    // =========================================================
+&nbsp;
+    uint256 public lastMintTime;
+    uint256 public nextTokenId;
+    uint256 public nextDisputeId;
+    uint256 public totalSupply;
+    uint256 public nextProposalId;
+&nbsp;
+    /**
+     * @dev Simple NFT ownership model.
+     * This is not a full ERC721 implementation, but it matches your current DAO design.
+     */
+    mapping(uint256 =&gt; address) public tokenOwner;
+&nbsp;
+    /**
+     * @dev Tracks how many DAO NFTs each address owns.
+     * Jury selection weight is based on this number.
+     */
+    mapping(address =&gt; uint256) public holderBalance;
+&nbsp;
+    /**
+     * @dev Keep a registry of addresses that have ever held a DAO NFT.
+     * We keep them in the array even if they later sell all tokens.
+     */
+    mapping(address =&gt; bool) public holderExists;
+    address[] public holders;
+&nbsp;
+    /**
+     * @dev Prevent multiple simultaneous active disputes for the same commission.
+     */
+    mapping(address =&gt; bool) public commissionHasActiveDispute;
+&nbsp;
+    struct Auction {
+        uint256 tokenId;
+        uint256 startTime;
+        uint256 endTime;
+        uint256 highestBid;
+        address highestBidder;
+        bool settled;
+    }
+&nbsp;
+    mapping(uint256 =&gt; Auction) public auctions;
+&nbsp;
+    /**
+     * @dev Vote choices for dispute resolution.
+     */
+    enum VoteOption {
+        None,
+        Artist,
+        Buyer,
+        Neither
+    }
+&nbsp;
+    /**
+     * @dev Stores all information about one DAO dispute.
+     *
+     * jurors:
+     * - selected jurors for this dispute
+     *
+     * voteOf:
+     * - each juror's selected vote
+     *
+     * hasVoted:
+     * - whether that juror already voted
+     */
+    struct DisputeCase {
+        address commission;
+        bool panelSelected;
+        bool resolved;
+        uint256 panelSize;
+        uint256 votingStart;
+        uint256 votingEnd;
+        uint256 totalJurorVotingPower;
+&nbsp;
+        address[] jurors;
+&nbsp;
+        uint256 artistVotes;
+        uint256 buyerVotes;
+        uint256 neitherVotes;
+&nbsp;
+        mapping(address =&gt; uint256) usedVotingPower;
+        mapping(address =&gt; VoteOption) voteOf;
+    }
+&nbsp;
+    mapping(uint256 =&gt; DisputeCase) private disputes;
+&nbsp;
+    struct Proposal {
+        address creator;
+        address recipient;
+        uint256 amount;
+        uint256 startTime;
+        uint256 endTime;
+        uint256 forVotes;
+        uint256 againstVotes;
+        bool executed;
+        uint256 totalVotingPower;
+        mapping(address =&gt; uint256) usedVotingPower;
+    }
+&nbsp;
+    mapping(uint256 =&gt; Proposal) private proposals;
+&nbsp;
+    // =========================================================
+    //                          EVENTS
+    // =========================================================
+&nbsp;
+    event Minted(uint256 tokenId, address to);
+    event AuctionStarted(uint256 tokenId, uint256 startTime, uint256 endTime);
+    event BidPlaced(uint256 tokenId, address bidder, uint256 amount);
+    event AuctionSettled(uint256 tokenId, address winner, uint256 amount);
+&nbsp;
+    event DisputeCreated(uint256 disputeId, address commission, uint256 panelSize);
+    event JurorSelected(uint256 disputeId, address juror);
+    event VoteCast(uint256 disputeId, address juror, VoteOption option);
+    event DisputeResolved(uint256 disputeId, VoteOption outcome);
+&nbsp;
+    event ProposalCreated(uint256 proposalId, address creator, address recipient, uint256 amount, uint256 endTime);
+    event ProposalVoted(uint256 proposalId, address voter, bool support, uint256 votingPower);
+    event ProposalExecuted(uint256 proposalId);
+&nbsp;
+    // =========================================================
+    //                        CONSTRUCTOR
+    // =========================================================
+&nbsp;
+    constructor() {
+        lastMintTime = block.timestamp;
+        nextTokenId = 1;
+        nextDisputeId = 1;
+        nextProposalId = 1;
+&nbsp;
+        _addHolderIfNeeded(address(this));
+    }
+&nbsp;
+    // =========================================================
+    //                     NFT / AUCTION LOGIC
+    // =========================================================
+&nbsp;
+    /**
+     * @dev Mint a new DAO NFT into the DAO treasury and immediately start an auction.
+     */
+    function mint() external {
+        require(block.timestamp &gt;= lastMintTime + MINT_INTERVAL, "Mint interval not reached");
+&nbsp;
+        uint256 tokenId = nextTokenId;
+        nextTokenId++;
+&nbsp;
+        _moveToken(address(0), address(this), tokenId);
+&nbsp;
+        lastMintTime = block.timestamp;
+&nbsp;
+        emit Minted(tokenId, address(this));
+        _startAuction(tokenId);
+    }
+&nbsp;
+    /**
+     * @dev Internal helper to start an auction.
+     */
+    function _startAuction(uint256 tokenId) internal {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(tokenOwner[tokenId] == address(this), "Token not owned by contract");
+&nbsp;
+        Auction storage auction = auctions[tokenId];
+        auction.tokenId = tokenId;
+        auction.startTime = block.timestamp;
+        auction.endTime = block.timestamp + AUCTION_DURATION;
+        auction.highestBid = 0;
+        auction.highestBidder = address(0);
+        auction.settled = false;
+&nbsp;
+        emit AuctionStarted(tokenId, auction.startTime, auction.endTime);
+    }
+&nbsp;
+    /**
+     * @dev Place a bid on an active auction.
+     */
+    function bid(uint256 tokenId) external payable {
+        Auction storage auction = auctions[tokenId];
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &gt;= auction.startTime, "Auction not started");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &lt;= auction.endTime, "Auction ended");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!auction.settled, "Auction already settled");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.value &gt; auction.highestBid, "Bid too low");
+&nbsp;
+        // Refund previous highest bidder.
+        if (auction.highestBidder != address(0)) {
+            payable(auction.highestBidder).transfer(auction.highestBid);
+        }
+&nbsp;
+        auction.highestBid = msg.value;
+        auction.highestBidder = msg.sender;
+&nbsp;
+        emit BidPlaced(tokenId, msg.sender, msg.value);
+    }
+&nbsp;
+    /**
+     * @dev Settle an auction after it ends.
+     */
+    function settleAuction(uint256 tokenId) external {
+        Auction storage auction = auctions[tokenId];
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &gt; auction.endTime, "Auction still ongoing");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!auction.settled, "Auction already settled");
+&nbsp;
+        auction.settled = true;
+&nbsp;
+        if (auction.highestBidder != address(0)) {
+            _moveToken(address(this), auction.highestBidder, tokenId);
+            emit AuctionSettled(tokenId, auction.highestBidder, auction.highestBid);
+        } else {
+            emit AuctionSettled(tokenId, address(0), 0);
+        }
+    }
+&nbsp;
+    /**
+     * @dev Transfer a DAO NFT from one owner to another.
+     */
+    function transfer(address to, uint256 tokenId) external {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(tokenOwner[tokenId] == msg.sender, "Not owner");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(to != address(0), "Invalid recipient");
+&nbsp;
+        _moveToken(msg.sender, to, tokenId);
+    }
+&nbsp;
+    /**
+     * @dev Return the number of DAO NFTs owned by an address.
+     */
+    function balanceOf(address owner) external view returns (uint256) {
+        return holderBalance[owner];
+    }
+&nbsp;
+    /**
+     * @dev Return the owner of a specific DAO NFT.
+     */
+    function ownerOf(uint256 tokenId) external view returns (address) {
+        return tokenOwner[tokenId];
+    }
+&nbsp;
+    /**
+     * @dev Return treasury ETH balance.
+     */
+    function treasuryBalance() external view returns (uint256) {
+        return address(this).balance;
+    }
+&nbsp;
+    // =========================================================
+    //                      DISPUTE CREATION
+    // =========================================================
+&nbsp;
+    /**
+     * @dev Create a new dispute case.
+     *
+     * Usually this is called by an ArtCommission contract after it enters Disputed state.
+     */
+    function createDisputeCase(
+        address commission,
+        uint256 panelSize,
+        uint256 votingDuration
+    ) external returns (uint256 disputeId) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(commission != address(0), "Invalid commission");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(panelSize &gt; 0, "Panel size must be &gt; 0");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(votingDuration &gt; 0, "Voting duration must be &gt; 0");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!commissionHasActiveDispute[commission], "Commission already has active dispute");
+&nbsp;
+        disputeId = nextDisputeId;
+        nextDisputeId++;
+&nbsp;
+        DisputeCase storage d = disputes[disputeId];
+        d.commission = commission;
+        d.panelSize = panelSize;
+        d.panelSelected = false;
+        d.resolved = false;
+        d.votingStart = 0;
+        d.votingEnd = 0;
+&nbsp;
+        commissionHasActiveDispute[commission] = true;
+&nbsp;
+        emit DisputeCreated(disputeId, commission, panelSize);
+    }
+&nbsp;
+    // =========================================================
+    //                 JUROR SELECTION / VOTING
+    // =========================================================
+&nbsp;
+    /**
+     * @dev Select jurors for a dispute using weighted lottery.
+     *
+     * Weight rule:
+     * - A holder with more DAO NFTs has higher probability of being selected.
+     *
+     * Excluded addresses:
+     * - the DAO treasury itself
+     * - the artist in the commission
+     * - the buyer in the commission
+     *
+     * Jurors are selected without duplication.
+     */
+    function selectJurors(uint256 disputeId, uint256 votingDuration) external {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.commission != address(0), "Dispute does not exist");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!d.panelSelected, "Panel already selected");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!d.resolved, "Dispute already resolved");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(votingDuration &gt; 0, "Voting duration must be &gt; 0");
+&nbsp;
+        address artistAddr = IArtCommission(d.commission).artist();
+        address buyerAddr = IArtCommission(d.commission).buyer();
+        
+        (
+            address[] memory candidates,
+            uint256[] memory weights,
+            uint256 candidateCount,
+            uint256 totalWeight
+        ) = _getEligibleCandidates(artistAddr, buyerAddr);
+&nbsp;
+        require(candidateCount &gt;= d.panelSize, "Not enough eligible holders");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(totalWeight &gt; 0, "No eligible holders");
+&nbsp;
+        bool[] memory picked = new bool[](candidateCount);
+&nbsp;
+        for (uint256 i = 0; i &lt; d.panelSize; i++) {
+            // This is pseudo-randomness for demo / prototype use.
+            uint256 rand = uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.prevrandao,
+                        block.timestamp,
+                        disputeId,
+                        i,
+                        totalWeight
+                    )
+                )
+            ) % totalWeight;
+&nbsp;
+            uint256 runningWeight = 0;
+            uint256 selectedIndex = type(uint256).max;
+&nbsp;
+            for (uint256 j = 0; j &lt; candidateCount; j++) {
+                if (picked[j]) continue;
+&nbsp;
+                runningWeight += weights[j];
+                if (rand &lt; runningWeight) {
+                    selectedIndex = j;
+                    break;
+                }
+            }
+&nbsp;
+            <span class="missing-if-branch" title="else path not taken" >E</span>require(selectedIndex != type(uint256).max, "Juror selection failed");
+&nbsp;
+            picked[selectedIndex] = true;
+            totalWeight -= weights[selectedIndex];
+&nbsp;
+            d.jurors.push(candidates[selectedIndex]);
+            d.totalJurorVotingPower += weights[selectedIndex];
+&nbsp;
+            emit JurorSelected(disputeId, candidates[selectedIndex]);
+        }
+&nbsp;
+        d.panelSelected = true;
+        d.votingStart = block.timestamp;
+        d.votingEnd = block.timestamp + votingDuration;
+    }
+&nbsp;
+    /**
+     * @dev Selected jurors cast their vote.
+     */
+    function vote(uint256 disputeId, VoteOption option) external {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.commission != address(0), "Dispute does not exist");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.panelSelected, "Panel not selected");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!d.resolved, "Dispute already resolved");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &lt;= d.votingEnd, "Voting ended");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(option != VoteOption.None, "Invalid vote");
+        require(_isJuror(disputeId, msg.sender), "Not selected juror");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.usedVotingPower[msg.sender] == 0, "Already voted");
+&nbsp;
+        uint256 votingPower = holderBalance[msg.sender];
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(votingPower &gt; 0, "No voting power");
+&nbsp;
+        d.usedVotingPower[msg.sender] = votingPower;
+        d.voteOf[msg.sender] = option;
+&nbsp;
+        if (option == VoteOption.Artist) {
+            d.artistVotes += votingPower;
+        } else if (option == VoteOption.Buyer) {
+            d.buyerVotes += votingPower;
+        } else <span class="missing-if-branch" title="else path not taken" >E</span>if (option == VoteOption.Neither) {
+            d.neitherVotes += votingPower;
+        }
+&nbsp;
+        emit VoteCast(disputeId, msg.sender, option);
+    }
+&nbsp;
+    /**
+     * @dev Resolve the dispute based on majority vote.
+     *
+     * Rule:
+     * - strict highest vote wins
+     * - ties default to Neither
+     */
+    function resolveDispute(uint256 disputeId) external {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.commission != address(0), "Dispute does not exist");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(d.panelSelected, "Panel not selected");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!d.resolved, "Already resolved");
+        require(
+            block.timestamp &gt; d.votingEnd || _allJurorsVoted(disputeId),
+            "Voting still active"
+        );
+&nbsp;
+        VoteOption outcome = _calculateOutcome(disputeId);
+&nbsp;
+        d.resolved = true;
+        commissionHasActiveDispute[d.commission] = false;
+&nbsp;
+        if (outcome == VoteOption.Artist) {
+            IArtCommission(d.commission).artistWins();
+        } else if (outcome == VoteOption.Buyer) {
+            IArtCommission(d.commission).buyerWins();
+        } else {
+            IArtCommission(d.commission).neitherWins();
+        }
+&nbsp;
+        for (uint256 i = 0; i &lt; d.jurors.length; i++) {
+            address juror = d.jurors[i];
+            if (d.usedVotingPower[juror] &gt; 0) {
+                payable(juror).transfer(JURY_REWARD);
+            }
+        }
+&nbsp;
+        emit DisputeResolved(disputeId, outcome);
+    }
+&nbsp;
+    // =========================================================
+    //                        VIEW HELPERS
+    // =========================================================
+&nbsp;
+    /**
+     * @dev Return selected jurors for a dispute.
+     */
+    function getJurors(uint256 disputeId) external view returns (address[] memory) {
+        return disputes[disputeId].jurors;
+    }
+&nbsp;
+    /**
+     * @dev Return current vote counts for a dispute.
+     */
+    function getVoteCounts(uint256 disputeId)
+        external
+        view
+        returns (
+            uint256 artistVotes,
+            uint256 buyerVotes,
+            uint256 neitherVotes
+        )
+    {
+        DisputeCase storage d = disputes[disputeId];
+        return (d.artistVotes, d.buyerVotes, d.neitherVotes);
+    }
+&nbsp;
+    /**
+     * @dev Return whether a specific juror voted and what they voted for.
+     */
+    function getJurorVote(uint256 disputeId, address juror)
+        external
+        view
+        returns (bool hasVoted, VoteOption option)
+    {
+        DisputeCase storage d = disputes[disputeId];
+        return (d.usedVotingPower[juror] &gt; 0, d.voteOf[juror]);
+    }
+&nbsp;
+    /**
+     * @dev Return all known holders ever registered in the DAO.
+     * Useful for debugging and testing.
+     */
+    function getAllHolders() external view returns (address[] memory) {
+        return holders;
+    }
+&nbsp;
+    // =========================================================
+    //                      INTERNAL HELPERS
+    // =========================================================
+&nbsp;
+    /**
+     * @dev Add a holder to the registry if not already present.
+     */
+    function _addHolderIfNeeded(address holder) internal {
+        if (!holderExists[holder]) {
+            holderExists[holder] = true;
+            holders.push(holder);
+        }
+    }
+&nbsp;
+    /**
+     * @dev Move token ownership and keep holder balances in sync.
+     *
+     * from == address(0) means mint.
+     */
+    function _moveToken(address from, address to, uint256 tokenId) internal {
+        if (from != address(0)) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>require(tokenOwner[tokenId] == from, "Incorrect owner");
+            <span class="missing-if-branch" title="else path not taken" >E</span>require(holderBalance[from] &gt; 0, "Insufficient holder balance");
+            holderBalance[from]--;
+        } else {
+            totalSupply++;
+        }
+&nbsp;
+        _addHolderIfNeeded(to);
+        holderBalance[to]++;
+        tokenOwner[tokenId] = to;
+    }
+&nbsp;
+    /**
+     * @dev Build the list of eligible juror candidates and their weights.
+     *
+     * A holder is eligible if:
+     * - they are not the DAO treasury
+     * - they are not the artist
+     * - they are not the buyer
+     * - they own at least one DAO NFT
+     */
+    function _getEligibleCandidates(address artistAddr, address buyerAddr)
+        internal
+        view
+        returns (
+            address[] memory candidates,
+            uint256[] memory weights,
+            uint256 candidateCount,
+            uint256 totalWeight
+        )
+    {
+        candidates = new address[](holders.length);
+        weights = new uint256[](holders.length);
+&nbsp;
+        for (uint256 i = 0; i &lt; holders.length; i++) {
+            address h = holders[i];
+            uint256 bal = holderBalance[h];
+&nbsp;
+            if (
+                h != address(this) &amp;&amp;
+                h != artistAddr &amp;&amp;
+                h != buyerAddr &amp;&amp;
+                bal &gt; 0
+            ) {
+                candidates[candidateCount] = h;
+                weights[candidateCount] = bal;
+                totalWeight += bal;
+                candidateCount++;
+            }
+        }
+    }
+&nbsp;
+    /**
+     * @dev Return true if user is one of the selected jurors for this dispute.
+     */
+    function _isJuror(uint256 disputeId, address user) internal view returns (bool) {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        for (uint256 i = 0; i &lt; d.jurors.length; i++) {
+            if (d.jurors[i] == user) {
+                return true;
+            }
+        }
+        return false;
+    }
+&nbsp;
+    /**
+     * @dev Return true if every selected juror has already voted.
+     */
+    function _allJurorsVoted(uint256 disputeId) internal view returns (bool) {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        for (uint256 i = 0; i &lt; d.jurors.length; i++) {
+            if (d.usedVotingPower[d.jurors[i]] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+&nbsp;
+    /**
+     * @dev Determine final outcome from vote counts.
+     *
+     * Strict highest vote wins.
+     * Any tie defaults to Neither.
+     */
+    function _calculateOutcome(uint256 disputeId) internal view returns (VoteOption) {
+        DisputeCase storage d = disputes[disputeId];
+&nbsp;
+        uint256 a = d.artistVotes;
+        uint256 b = d.buyerVotes;
+        uint256 n = d.neitherVotes;
+        uint256 totalVoted = a + b + n;
+&nbsp;
+        if (totalVoted == 0) {
+            return VoteOption.Neither;
+        }
+&nbsp;
+        uint256 half = totalVoted * 50 / 100;
+&nbsp;
+        if (a &gt; half) {
+            return VoteOption.Artist;
+        }
+&nbsp;
+        if (b &gt; half) {
+            return VoteOption.Buyer;
+        }
+&nbsp;
+        if (n &gt; half) {
+            return VoteOption.Neither;
+        }
+&nbsp;
+        return VoteOption.Neither;
+    }
+&nbsp;
+    function createProposal(address recipient, uint256 amount) external returns (uint256) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(holderBalance[msg.sender] &gt; 0, "Not a DAO member");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(recipient != address(0), "Invalid recipient");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(amount &gt; 0, "Amount must be positive");
+&nbsp;
+        uint256 proposalId = nextProposalId;
+        nextProposalId++;
+&nbsp;
+        Proposal storage p = proposals[proposalId];
+        p.creator = msg.sender;
+        p.recipient = recipient;
+        p.amount = amount;
+        p.startTime = block.timestamp;
+        p.endTime = block.timestamp + 7 days;
+        p.executed = false;
+        p.totalVotingPower = totalSupply;
+&nbsp;
+        emit ProposalCreated(proposalId, msg.sender, recipient, amount, p.endTime);
+        return proposalId;
+    }
+&nbsp;
+    function voteProposal(uint256 proposalId, bool support) external {
+        Proposal storage p = proposals[proposalId];
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(p.creator != address(0), "Proposal does not exist");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &lt;= p.endTime, "Voting ended");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!p.executed, "Proposal already executed");
+&nbsp;
+        uint256 votingPower = holderBalance[msg.sender];
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(votingPower &gt; 0, "No voting power");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(p.usedVotingPower[msg.sender] == 0, "Already voted");
+&nbsp;
+        p.usedVotingPower[msg.sender] = votingPower;
+&nbsp;
+        if (support) {
+            p.forVotes += votingPower;
+        } else {
+            p.againstVotes += votingPower;
+        }
+&nbsp;
+        emit ProposalVoted(proposalId, msg.sender, support, votingPower);
+    }
+&nbsp;
+    function executeProposal(uint256 proposalId) external {
+        Proposal storage p = proposals[proposalId];
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(p.creator != address(0), "Proposal does not exist");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(block.timestamp &gt; p.endTime, "Voting not ended");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(!p.executed, "Proposal already executed");
+&nbsp;
+        uint256 totalVotes = p.forVotes + p.againstVotes;
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(totalVotes &gt; 0, "No votes cast");
+&nbsp;
+        uint256 threshold = p.totalVotingPower * 67 / 100;
+        require(p.forVotes &gt;= threshold, "Insufficient support");
+&nbsp;
+        p.executed = true;
+        payable(p.recipient).transfer(p.amount);
+&nbsp;
+        emit ProposalExecuted(proposalId);
+    }
+&nbsp;
+    function getProposal(uint256 proposalId) external view returns (
+        address creator,
+        address recipient,
+        uint256 amount,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 forVotes,
+        uint256 againstVotes,
+        bool executed,
+        uint256 totalVotingPower
+    ) {
+        Proposal storage p = proposals[proposalId];
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(p.creator != address(0), "Proposal does not exist");
+&nbsp;
+        creator = p.creator;
+        recipient = p.recipient;
+        amount = p.amount;
+        startTime = p.startTime;
+        endTime = p.endTime;
+        forVotes = p.forVotes;
+        againstVotes = p.againstVotes;
+        executed = p.executed;
+        totalVotingPower = p.totalVotingPower;
+    }
+&nbsp;
+    receive() external payable {}
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Apr 25 2026 14:25:33 GMT-0400 (Eastern Daylight Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

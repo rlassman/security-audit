@@ -309,7 +309,17 @@ describe("art_DAO", () => {
     });
 
 //------------------------------------------------------------------------------------------------------------------------
-    //TODO
+    it("lets dispute end as soon as all votes are cast", async () => {
+        const artDAO = await setupNewDAO();
+        const { disputeId, jurors } = await DisputeNoVotes(artDAO);
+    
+        for (const jurorAddr of jurors) {
+            const juror = await ethers.getSigner(jurorAddr);
+            await artDAO.connect(juror).vote(disputeId, VoteOption.Neither);
+        }
+        await expect(artDAO.resolveDispute(disputeId)).to.not.be.reverted;
+    });
+//------------------------------------------------------------------------------------------------------------------------
     //multiple votes, different types, majority in favor
     it("popular proposal gets passed", async () => {
         const artDAO = await setupNewDAO();
@@ -344,7 +354,59 @@ describe("art_DAO", () => {
         
         
     });
-    //multiple votes, different types, majority against
+//------------------------------------------------------------------------------------------------------------------------
+
+        it("must wait between auctions", async () => {
+        const artDAO = await setupNewDAO();
+        await artDAO.mint();
+        await expect(artDAO.mint()).to.be.revertedWith("Mint interval not reached");
+        });
+//------------------------------------------------------------------------------------------------------------------------
+        it("settles auctions with no bids", async () => {
+        const artDAO = await setupNewDAO();
+        await artDAO.mint();
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+        await artDAO.settleAuction(4);
+        });
+//------------------------------------------------------------------------------------------------------------------------
+        it("can transfer NFTs", async () => {
+            const artDAO = await setupNewDAO();
+            await expect(artDAO
+            .connect(holder1)
+            .transfer(holder2, 1)).to.not.be.reverted; 
+
+            expect(await artDAO.ownerOf(1)).to.equal(await holder2.getAddress());
+        });
+//------------------------------------------------------------------------------------------------------------------------
+
+    it("can show vote counts", async () => {
+        const artDAO = await setupNewDAO();
+        const {disputeId, jurors} = await DisputeNoVotes(artDAO);
+        for (const jurorAddr of jurors) {
+            const juror = await ethers.getSigner(jurorAddr);
+            await artDAO.connect(juror).vote(1, 1);
+            const voted = await artDAO.getJurorVote(disputeId, jurorAddr);
+            expect(voted[0]).to.equal(true);
+        }
+        const counts = await artDAO.getVoteCounts(disputeId); 
+        expect(counts[0]).to.equal(3n);
+    });
+//------------------------------------------------------------------------------------------------------------------------
+        it("can view balance", async () => {
+            const artDAO = await setupNewDAO();
+            const oldbal = await artDAO.treasuryBalance();
+            await artDAO.mint();
+            await artDAO
+            .connect(holder1)
+            .bid(4, { value: ethers.parseEther("0.01") });
+            await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+            await network.provider.send("evm_mine");
+            await artDAO.settleAuction(4);
+            expect(await artDAO.treasuryBalance()).to.be.greaterThan(oldbal);
+        });
+//------------------------------------------------------------------------------------------------------------------------
+//multiple votes, different types, majority against
     it("unpopular proposal does not get passed", async () => {
          const artDAO = await setupNewDAO();
         await artDAO.mint();
@@ -360,6 +422,7 @@ describe("art_DAO", () => {
        const propid =  await artDAO
             .connect(holder1)
             .createProposal(holder1, 100); 
+        expect((await artDAO.getProposal(1n))[0]).to.equal(holder1);
         for (holder of holders) {
            if (holder == holder4) {
             await artDAO
@@ -377,11 +440,14 @@ describe("art_DAO", () => {
         expect(artDAO.executeProposal(1n)).to.be.revertedWith("Insufficient support");
         
     });
-
+//------------------------------------------------------------------------------------------------------------------------
+/*
     //voting process with extensive checks on juror values
     it("has expected juror values throughout voting", async () => {
 
     });
+    */
+//------------------------------------------------------------------------------------------------------------------------
     //checks dispute that ends with no votes
     it("survives dispute with no votes", async () => {
           const artDAO = await setupNewDAO();
@@ -389,9 +455,10 @@ describe("art_DAO", () => {
         panelSize = 3;
       
         const { disputeId, jurors } = await DisputeNoVotes(artDAO);
-
         //each vote individually- if contract use special function instead of normal
         //see if can resolve
+        await expect(artDAO.connect(buyer).vote(disputeId, VoteOption.Buyer)).to.be.revertedWith("Not selected juror");
+        await expect(artDAO.resolveDispute(disputeId)).to.be.revertedWith("Voting still active");
         await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
         await network.provider.send("evm_mine");
        // expect(await commission.progress()).to.equal(4);
@@ -404,10 +471,29 @@ describe("art_DAO", () => {
     });
     //checks close votes
    // it("gives correct results voting", async () => {});
-    //checks if artist can get on jury
-    it("doesn't let artist on jury", async () => {});
+//------------------------------------------------------------------------------------------------------------------------
+   //tied vote
+    //getAllHolders*
+
+    it("behave correctly if vote is tied", async () => {
+        const artDAO = await setupNewDAO();
+        panelSize = 2;
+        expect((await artDAO.getAllHolders()).length).to.equal(4);
+
+        const { disputeId, jurors } = await DisputeNoVotes(artDAO);
+        const juror1 = await ethers.getSigner(jurors[0]);
+        await artDAO.connect(juror1).vote(disputeId, VoteOption.Artist);
+        const juror2 = await ethers.getSigner(jurors[1]);
+        await artDAO.connect(juror2).vote(disputeId, VoteOption.Buyer);
+        
+        await expect(artDAO.resolveDispute(disputeId)).to.not.be.reverted;
+    });
+//------------------------------------------------------------------------------------------------------------------------
     //checks if buyer can get on jury
-    it("doesn't let buyer on jury", async () => {});
+   //it("doesn't let buyer on jury", async () => {});
+
+//------------------------------------------------------------------------------------------------------------------------
+    //specifially neither or buyer win scenario
     //check dispute resolution where buyer reverts on receive
     it("reverts on dispute with evil buyer", async () => {
         const artDAO = await setupNewDAO();
@@ -460,6 +546,9 @@ describe("art_DAO", () => {
         //something weird going on here
         
     });
+    //only artist win scenario
     //check dispute resolution where sender revert on receive
-    it("reverts on dispute with evil artist", async () => {});
+    it("reverts on dispute with evil artist", async () => {
+        
+    });
 });
