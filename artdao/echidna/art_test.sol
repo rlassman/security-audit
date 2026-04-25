@@ -9,7 +9,18 @@ contract art_test {
         level = art_commission();
     }
   
-    //
+    // full disclosure: I'm writing really random things
+    function test_contribute() external payable {
+        level.contribute.value(msg.value)(); 
+    }
+
+    function test_withdraw() external  {
+        level.withdraw();
+    }
+
+    function test_fallback() external payable {
+        address(level).call.value(msg.value)(""); 
+    }
     
     function test_hacked() public returns (bool) {
         //To beat the level you needed to become the owner and withdraw the balance
