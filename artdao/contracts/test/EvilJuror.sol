@@ -9,7 +9,7 @@ interface DAO {
         Neither
     }
     function bid(uint256) external;
-    function vote(uint256, uint) external;
+    function vote(uint256, VoteOption) external;
 }
 
 contract  EvilJuror is IERC721Receiver {
@@ -22,8 +22,10 @@ contract  EvilJuror is IERC721Receiver {
     function makebid(uint256 val) public payable {
          address(artdao).call{value: 100}(abi.encodeWithSignature("bid(uint256)", val));
     }
+
     function justvote(uint256 id) public {
-        artdao.vote(id, 2);
+       (bool sent, bytes memory data) = address(artdao).call(abi.encodeWithSignature("vote(uint256, VoteOption)", id, 2));
+        require(sent, "Failed to vote");
     }
 
     function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {

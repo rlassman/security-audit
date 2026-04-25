@@ -24,9 +24,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
+          "internalType": "enum DAO.VoteOption",
           "name": "",
-          "type": "uint256"
+          "type": "uint8"
         }
       ],
       "name": "vote",
