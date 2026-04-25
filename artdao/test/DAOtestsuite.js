@@ -367,10 +367,30 @@ describe("art_DAO", () => {
         expect(artDAO.executeProposal(1n)).to.be.revertedWith("Insufficient support");
         
     });
+
     //voting process with extensive checks on juror values
-    it("has expected juror values throughout voting", async () => {});
+    it("has expected juror values throughout voting", async () => {
+    });
     //checks dispute that ends with no votes
-    it("survives dispute with no votes", async () => {});
+    it("survives dispute with no votes", async () => {
+          const artDAO = await setupNewDAO();
+       
+        panelSize = 3;
+      
+        const { disputeId, jurors } = await DisputeNoVotes(artDAO);
+
+        //each vote individually- if contract use special function instead of normal
+        //see if can resolve
+        await network.provider.send("evm_increaseTime", [7 * 86400 + 1]);
+        await network.provider.send("evm_mine");
+       // expect(await commission.progress()).to.equal(4);
+        //expect(await nft.ownerOf(1)).to.equal(artist.address);
+
+        //evil juror reject juror payout, trap dispute in limbo
+   
+        await expect(artDAO.resolveDispute(disputeId)).to.not.be.reverted;
+        
+    });
     //checks close votes
     it("gives correct results voting", async () => {});
     //checks if artist can get on jury
