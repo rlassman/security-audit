@@ -16,7 +16,12 @@ contract dao_test {
         assert(!(level.owner() == address(this) && address(level).balance == 0));
     }
 
-    function testMint() public {}
+    function testMint() public {
+        uint256 oldid = level.nextTokenId();
+        level.mint();
+        assert(level.nextTokenId() == oldid - 1);
+        assert(level.ownerOf(oldid) == address(level));
+    }
 
     function testBid() {}
 
