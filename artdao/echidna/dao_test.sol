@@ -2,6 +2,7 @@ pragma solidity ^0.8.0;
 
 import 'art_dao.sol';
 
+
 contract dao_test {
     art_dao level;
 
