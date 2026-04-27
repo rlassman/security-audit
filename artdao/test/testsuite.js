@@ -572,6 +572,8 @@ describe("art_commission", function () {
             // release - fails
             await expect(commission.connect(buyer).goodFaithRelease()).to.be.revertedWith("Both parties must approve cancellation");
             await expect(commission.connect(artist).goodFaithRelease()).to.be.revertedWith("Both parties must approve cancellation");
+
+            await expect(commission.connect(buyer).goodFaithRelease()).to.be.revertedWith("Both parties must approve cancellation");
             
         })
 
