@@ -32,9 +32,17 @@ contract dao_test {
             assert(level.auctions[curtok].highestBid == val);
         }
     }
-/*
-    function testSettleAuction() {}
 
+
+    function testSettleAuction() public {
+          address oldbid = level.auctions[curtok].highestBidder;
+          settleAuction(curtok);
+          if (oldbid != address(0)) {
+            assert(tokenOwner(curtok) == oldbid);
+          }
+
+    }
+/*
     function testTransfer() {}
 
     function testBalanceOf() {}
