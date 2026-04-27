@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "art_dao.sol";
+import "art_commission.sol"
 
 
 contract dao_test {
@@ -12,7 +13,6 @@ contract dao_test {
         level = new ArtDAO();
     }
   
-    //
 
 
     function testMint() public {
@@ -42,17 +42,23 @@ contract dao_test {
           }
 
     }
+
+    function testTransfer(address to) public {
+        level.transfer(to, curtok);
+        assert(tokenOwner(curtok) == to);
+    }
+
+
+    //function testBalanceOf() {}
+
+   // function test ownerOf() {}
+
+    //function testTreasuryBalance() {}
+
+    function testCreateDisputeCase() {
+        level.
+    }
 /*
-    function testTransfer() {}
-
-    function testBalanceOf() {}
-
-    function test ownerOf() {}
-
-    function testTreasuryBalance() {}
-
-    function testCreateDisputeCase() {}
-
     function testSelectJurors() {}
 
     function testVote() {}
