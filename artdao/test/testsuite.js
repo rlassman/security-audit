@@ -207,7 +207,7 @@ describe("art_commission", function () {
             const insurance = ethers.parseEther("0.0074"); // must be > 0.015 eth?
             const timeframe = 0;
 
-            // deploy
+            // deploy - does not revert
             const ArtCommission = await ethers.getContractFactory("ArtCommission");
             await expect(ArtCommission.connect(buyer).deploy(
             buyer.address,
@@ -779,6 +779,320 @@ describe("art_commission", function () {
             // check ownsership of art
             expect(await nft.ownerOf(1)).to.equal(buyer.address);
         })
+    });
+
+    describe("added to kill mutants", async function () {
+        it("Pay before accept art", async function () {
+           const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+           const params = defaultParams();
+           await commission.connect(artist).contractConfirm();
+           const { artistFund, buyerFund } = await fundBoth(
+               commission,
+               buyer,
+               artist,
+               params
+           );
+
+
+           await expect(commission.connect(buyer).payInFullAndRelease({
+               value: params.price - params.upfront})).to.be.revertedWith("Artwork not submitted");
+
+
+       })
+        it("Call accept art before fund", async function () {
+           const { artDAO, nft, commission, deployer, buyer, artist } = await loadFixture(deployFull);
+           const params = defaultParams();
+           await commission.connect(artist).contractConfirm();
+
+
+           // approve and accept art
+           await nft.mint(artist.address, 1);
+           await nft.connect(artist).approve(commission.target, 1);
+           await expect(commission.connect(artist).acceptArt(nft.target, 1)).to.be.revertedWith("Contract has not been funded by both parties");
+       })
+
+       it("raise dispute before fund", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+
+            // buyer creates dispute
+            const panelSize = 3;
+            const votingDuration = 300;
+
+            await network.provider.send("evm_increaseTime", [2 * 86400]);
+            await network.provider.send("evm_mine");
+
+            await expect(commission.connect(buyer).raiseDispute(panelSize, votingDuration)).to.be.revertedWith("Cannot dispute in current state");
+       })
+
+       it("raise dispute after completed", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+
+            // pay in full and release
+            const lastPayment = params.price - params.upfront;
+            const tx = await commission.connect(buyer).payInFullAndRelease({
+                value: lastPayment
+            });
+
+            // buyer creates dispute
+            const panelSize = 3;
+            const votingDuration = 300;
+
+            await network.provider.send("evm_increaseTime", [2 * 86400]);
+            await network.provider.send("evm_mine");
+
+            await expect(commission.connect(buyer).raiseDispute(panelSize, votingDuration)).to.be.revertedWith("Cannot dispute in current state");
+       })
+
+       it("raise dispute twice", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+            expect(await commission.progress()).to.equal(3);
+
+
+            // buyer creates dispute
+            const panelSize = 3;
+            const votingDuration = 300;
+
+            await network.provider.send("evm_increaseTime", [2 * 86400]);
+            await network.provider.send("evm_mine");
+
+            await commission.connect(buyer).raiseDispute(panelSize, votingDuration);
+            await expect(commission.connect(artist).raiseDispute(panelSize, votingDuration)).to.be.revertedWith("Cannot dispute in current state");
+       })
+
+       it("don't leave time", async function () {
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+            expect(await commission.progress()).to.equal(3);
+
+
+            // buyer creates dispute
+            const panelSize = 3;
+            const votingDuration = 300;
+            await expect(commission.connect(artist).raiseDispute(panelSize, votingDuration)).to.be.revertedWith("Must leave time before transaction can be disputed");
+       })
+
+       it("call artistWins not dispute", async function () {
+            // deploy
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+
+                const daoAddress = artDAO.target;
+                await network.provider.request({
+                    method: "hardhat_impersonateAccount",
+                    params: [daoAddress],
+                });
+
+                // Fund the impersonated DAO address so it can pay gas
+                await network.provider.send("hardhat_setBalance", [
+                    daoAddress,
+                    "0x56BC75E2D63100000", // 100 ETH in hex
+                ]);
+
+                const daoSigner = await ethers.getSigner(daoAddress);
+
+                // Now call artistWins as the DAO
+                await expect(commission.connect(daoSigner).artistWins()).to.be.revertedWith("Voting outcome only applicable for disputed commissions");
+
+                // Stop impersonating
+                await network.provider.request({
+                    method: "hardhat_stopImpersonatingAccount",
+                    params: [daoAddress],
+                });
+
+       })
+       it("call buyerWins not dispute", async function () {
+            // deploy
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+
+                const daoAddress = artDAO.target;
+                await network.provider.request({
+                    method: "hardhat_impersonateAccount",
+                    params: [daoAddress],
+                });
+
+                // Fund the impersonated DAO address so it can pay gas
+                await network.provider.send("hardhat_setBalance", [
+                    daoAddress,
+                    "0x56BC75E2D63100000", // 100 ETH in hex
+                ]);
+
+                const daoSigner = await ethers.getSigner(daoAddress);
+
+                // Now call artistWins as the DAO
+                await expect(commission.connect(daoSigner).buyerWins()).to.be.revertedWith("Voting outcome only applicable for disputed commissions");
+
+                // Stop impersonating
+                await network.provider.request({
+                    method: "hardhat_stopImpersonatingAccount",
+                    params: [daoAddress],
+                });
+
+       })
+       it("call neitherWins not dispute", async function () {
+            // deploy
+            const { artDAO, nft, deployer, buyer, artist } = await loadFixture(setupNewDAO);
+            const params = defaultParams();
+            const ArtCommission = await ethers.getContractFactory("ArtCommission");
+            const commission = await ArtCommission.connect(buyer).deploy(
+                buyer.address,
+                artist.address,
+                params.insurance,
+                params.price,
+                params.upfront,
+                params.timeframe,
+                artDAO.target
+            );
+
+            // set up
+            await commission.connect(artist).contractConfirm();
+            const { artistFund, buyerFund } = await fundBoth(
+                commission,
+                buyer,
+                artist,
+                params
+            );
+            await submitArt(commission, nft, artist);
+
+                const daoAddress = artDAO.target;
+                await network.provider.request({
+                    method: "hardhat_impersonateAccount",
+                    params: [daoAddress],
+                });
+
+                // Fund the impersonated DAO address so it can pay gas
+                await network.provider.send("hardhat_setBalance", [
+                    daoAddress,
+                    "0x56BC75E2D63100000", // 100 ETH in hex
+                ]);
+
+                const daoSigner = await ethers.getSigner(daoAddress);
+
+                // Now call artistWins as the DAO
+                await expect(commission.connect(daoSigner).neitherWins()).to.be.revertedWith("Voting outcome only applicable for disputed commissions");
+
+                // Stop impersonating
+                await network.provider.request({
+                    method: "hardhat_stopImpersonatingAccount",
+                    params: [daoAddress],
+                });
+       })
     });
 })
 
