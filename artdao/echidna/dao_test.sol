@@ -1,31 +1,38 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import 'art_dao.sol';
+import "art_dao.sol";
 
 
 contract dao_test {
-    art_dao level;
+    ArtDAO level;
+    uint256 curtok;
 
-    constructor() public payable { 
-        level = art_dao();
+    constructor() payable{ 
+        level = new ArtDAO();
     }
   
     //
-    
-    function test_hacked() public returns (bool) {
-        //To beat the level you needed to become the owner and withdraw the balance
-        assert(!(level.owner() == address(this) && address(level).balance == 0));
-    }
+
 
     function testMint() public {
         uint256 oldid = level.nextTokenId();
         level.mint();
         assert(level.nextTokenId() == oldid - 1);
+        curtok = oldid;
         assert(level.ownerOf(oldid) == address(level));
     }
 
-    function testBid() {}
-
+    function testBid(uint256 val) public {
+        uint256 oldbid = level.auctions[curtok].highestBid;
+        bool shouldwin = val > level.auctions[curtok].highestBid
+        level.bid(curtok, {value: val});
+        assert(level.auctions[curtok].highestBid >= oldbid);
+        if (shouldwin) {
+            assert(level.auctions[curtok].highestBid == val);
+        }
+    }
+/*
     function testSettleAuction() {}
 
     function testTransfer() {}
@@ -61,4 +68,5 @@ contract dao_test {
     function testGetProposal() {}
 
     receive() external payable {}
+    */
 }

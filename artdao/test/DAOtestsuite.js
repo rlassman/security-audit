@@ -495,6 +495,7 @@ describe("art_DAO", () => {
 //------------------------------------------------------------------------------------------------------------------------
     //specifially neither or buyer win scenario
     //check dispute resolution where buyer reverts on receive
+    //BUG
     it("reverts on dispute with evil buyer", async () => {
         const artDAO = await setupNewDAO();
         const EvilJuror = await ethers.getContractFactory("EvilBuyer");
@@ -544,11 +545,6 @@ describe("art_DAO", () => {
 
         await expect(artDAO.resolveDispute(disputeId)).to.be.reverted;
         //something weird going on here
-        
-    });
-    //only artist win scenario
-    //check dispute resolution where sender revert on receive
-    it("reverts on dispute with evil artist", async () => {
         
     });
 });
