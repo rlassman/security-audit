@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "art_dao.sol";
-import "art_commission.sol"
+import "art_commission.sol";
 
 
 contract dao_test {
@@ -25,8 +25,9 @@ contract dao_test {
 
     function testBid(uint256 val) public {
         uint256 oldbid = level.auctions[curtok].highestBid;
-        bool shouldwin = val > level.auctions[curtok].highestBid
-        level.bid(curtok, {value: val});
+        bool shouldwin = val > level.auctions[curtok].highestBid;
+        (bool sent, bytes memory data) = address(level).call(abi.encodeWithSignature("bid(256)", val));
+        require(sent, "Failed to vote");
         assert(level.auctions[curtok].highestBid >= oldbid);
         if (shouldwin) {
             assert(level.auctions[curtok].highestBid == val);
@@ -36,16 +37,16 @@ contract dao_test {
 
     function testSettleAuction() public {
           address oldbid = level.auctions[curtok].highestBidder;
-          settleAuction(curtok);
+          level.settleAuction(curtok);
           if (oldbid != address(0)) {
-            assert(tokenOwner(curtok) == oldbid);
+            assert(level.tokenOwner(curtok) == oldbid);
           }
 
     }
 
     function testTransfer(address to) public {
         level.transfer(to, curtok);
-        assert(tokenOwner(curtok) == to);
+        assert(level.tokenOwner(curtok) == to);
     }
 
 
@@ -55,8 +56,13 @@ contract dao_test {
 
     //function testTreasuryBalance() {}
 
-    function testCreateDisputeCase() {
-        level.
+    function createCommission(address artist, uint128 insuranceAmount, uint256 price, uint256 upfrontPay, uint256 timeframe ) public{
+        insuranceAmount += 7500000000000000;
+        if (upfrontPay < price) {
+            upfrontPay = price;
+        }
+        ArtCommission comm = new ArtCommission(address(this, artist, insuranceAmount, price, upfrontPay, timeframe, address(level)));
+        
     }
 /*
     function testSelectJurors() {}
